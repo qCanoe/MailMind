@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MailMind</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles/main.css" />
+</head>
+<body>
+
+  <!-- ========== TOP BAR ========== -->
+  <header class="topbar">
+    <div class="topbar-left">
+      <button class="topbar-hamburger" id="sidebarToggle" aria-label="展开/收起导航">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+          <rect y="3"  width="20" height="1.6" rx="0.8" fill="currentColor"/>
+          <rect y="9.2" width="20" height="1.6" rx="0.8" fill="currentColor"/>
+          <rect y="15.4" width="20" height="1.6" rx="0.8" fill="currentColor"/>
+        </svg>
+      </button>
+      <div class="topbar-logo">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+          <rect width="11" height="11" x="1" y="1" fill="#f35325"/>
+          <rect width="11" height="11" x="13" y="1" fill="#81bc06"/>
+          <rect width="11" height="11" x="1" y="13" fill="#05a6f0"/>
+          <rect width="11" height="11" x="13" y="13" fill="#ffba08"/>
+        </svg>
+        <span class="topbar-app-name">MailMind</span>
+      </div>
+    </div>
+
+    <div class="topbar-search">
+      <div class="search-wrapper">
+        <svg class="search-icon" width="16" height="16" viewBox="0 0 16 16" fill="none">
+          <circle cx="6.5" cy="6.5" r="5" stroke="currentColor" stroke-width="1.4"/>
+          <line x1="10.5" y1="10.5" x2="14.5" y2="14.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+        </svg>
+        <input
+          id="searchInput"
+          class="search-input"
+          type="text"
+          placeholder="搜索邮件"
+          autocomplete="off"
+        />
+        <button class="search-clear" id="searchClear" aria-label="清除搜索" style="display:none">
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+            <line x1="1" y1="1" x2="11" y2="11" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+            <line x1="11" y1="1" x2="1" y2="11" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <div class="topbar-right">
+      <button class="topbar-icon-btn" aria-label="设置">
+        <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+          <path d="M9 11.5a2.5 2.5 0 100-5 2.5 2.5 0 000 5z" stroke="currentColor" stroke-width="1.4"/>
+          <path d="M14.5 9c0-.37-.03-.73-.09-1.08l1.76-1.37-1.5-2.6-2.1.85A6.5 6.5 0 009.5 4l-.37-2.2h-3l-.37 2.2a6.5 6.5 0 00-2.07.8l-2.1-.85-1.5 2.6 1.76 1.37A6.6 6.6 0 001.5 9c0 .37.03.73.09 1.08l-1.76 1.37 1.5 2.6 2.1-.85c.63.33 1.32.57 2.07.8l.37 2.2h3l.37-2.2a6.5 6.5 0 002.07-.8l2.1.85 1.5-2.6-1.76-1.37c.06-.35.09-.71.09-1.08z" stroke="currentColor" stroke-width="1.3"/>
+        </svg>
+      </button>
+      <div class="topbar-avatar" aria-label="用户账户">
+        <span>YS</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- ========== MAIN LAYOUT ========== -->
+  <div class="layout">
+
+    <!-- ========== LEFT SIDEBAR ========== -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-actions">
+        <button class="compose-btn" id="composeBtn">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+            <path d="M13.5 2.5L10.5 5.5M2 14l2-5.5L11.5 1 15 4.5 7.5 12 2 14z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/>
+          </svg>
+          <span>新建邮件</span>
+        </button>
+      </div>
+
+      <nav class="sidebar-nav">
+        <ul class="folder-list" id="folderList">
+          <li class="folder-item active" data-folder="inbox">
+            <svg class="folder-icon" width="18" height="18" viewBox="0 0 18 18" fill="none">
+              <path d="M2 3h14a1 1 0 011 1v8a1 1 0 01-1 1H2a1 1 0 01-1-1V4a1 1 0 011-1z" stroke="currentColor" stroke-width="1.3"/>
+              <path d="M1 9h4l1.5 2h5L13 9h4" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/>
+            </svg>
+            <span class="folder-label">收件箱</span>
+            <span class="folder-badge" id="badge-inbox">6</span>
+          </li>
+          <li class="folder-item" data-folder="starred">
+            <svg class="folder-icon" width="18" height="18" viewBox="0 0 18 18" fill="none">
+              <path d="M9 2l1.8 5.6H17l-4.9 3.5 1.8 5.6L9 13.2l-4.9 3.5 1.8-5.6L1 7.6h6.2L9 2z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/>
+            </svg>
+            <span class="folder-label">已加星标</span>
+            <span class="folder-badge" id="badge-starred" style="display:none">0</span>
+          </li>
+          <li class="folder-item" data-folder="drafts">
+            <svg class="folder-icon" width="18" height="18" viewBox="0 0 18 18" fill="none">
+              <path d="M3 14V4a1 1 0 011-1h7l4 4v7a1 1 0 01-1 1H4a1 1 0 01-1-1z" stroke="currentColor" stroke-width="1.3"/>
+              <path d="M11 3v4h4" stroke="currentColor" stroke-width="1.3"/>
+              <line x1="5" y1="9" x2="10" y2="9" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
+              <line x1="5" y1="11.5" x2="13" y2="11.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
+            </svg>
+            <span class="folder-label">草稿箱</span>
+            <span class="folder-badge" id="badge-drafts">2</span>
+          </li>
+          <li class="folder-item" data-folder="sent">
+            <svg class="folder-icon" width="18" height="18" viewBox="0 0 18 18" fill="none">
+              <path d="M2 3l14 6-14 6V10.5l9-1.5-9-1.5V3z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/>
+            </svg>
+            <span class="folder-label">已发送</span>
+          </li>
+          <li class="folder-item" data-folder="junk">
+            <svg class="folder-icon" width="18" height="18" viewBox="0 0 18 18" fill="none">
+              <path d="M6 3h6l1 2H5L6 3z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/>
+              <rect x="3" y="5" width="12" height="10" rx="1" stroke="currentColor" stroke-width="1.3"/>
+              <line x1="7" y1="8" x2="7" y2="12" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
+              <line x1="11" y1="8" x2="11" y2="12" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
+            </svg>
+            <span class="folder-label">垃圾邮件</span>
+          </li>
+          <li class="folder-item" data-folder="archive">
+            <svg class="folder-icon" width="18" height="18" viewBox="0 0 18 18" fill="none">
+              <rect x="2" y="3" width="14" height="3" rx="1" stroke="currentColor" stroke-width="1.3"/>
+              <path d="M3 6h12v8a1 1 0 01-1 1H4a1 1 0 01-1-1V6z" stroke="currentColor" stroke-width="1.3"/>
+              <line x1="7" y1="9.5" x2="11" y2="9.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
+            </svg>
+            <span class="folder-label">归档</span>
+          </li>
+          <li class="folder-divider"></li>
+          <li class="folder-item" data-folder="deleted">
+            <svg class="folder-icon" width="18" height="18" viewBox="0 0 18 18" fill="none">
+              <path d="M6 3h6l1 2H5L6 3z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/>
+              <rect x="3" y="5" width="12" height="10" rx="1" stroke="currentColor" stroke-width="1.3"/>
+            </svg>
+            <span class="folder-label">已删除</span>
+          </li>
+        </ul>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="storage-info">
+          <div class="storage-bar">
+            <div class="storage-fill" style="width:34%"></div>
+          </div>
+          <span class="storage-text">已使用 3.4 GB / 10 GB</span>
+        </div>
+      </div>
+    </aside>
+
+    <!-- ========== MAIL LIST PANEL ========== -->
+    <section class="mail-list-panel" id="mailListPanel">
+      <div class="mail-list-header">
+        <div class="mail-list-title-row">
+          <h2 class="mail-list-title" id="folderTitle">收件箱</h2>
+          <div class="mail-list-actions">
+            <button class="list-action-btn" id="sortBtn" title="排序">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                <line x1="2" y1="4" x2="14" y2="4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
+                <line x1="2" y1="8" x2="11" y2="8" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
+                <line x1="2" y1="12" x2="8" y2="12" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
+              </svg>
+            </button>
+            <button class="list-action-btn" id="filterBtn" title="筛选">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                <path d="M1 3h14l-5.5 6v5l-3-1.5V9L1 3z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+        <div class="mail-list-tabs">
+          <button class="tab-btn active" data-tab="all">全部</button>
+          <button class="tab-btn" data-tab="unread">未读</button>
+          <button class="tab-btn" data-tab="flagged">已标记</button>
+        </div>
+      </div>
+
+      <div class="mail-list-scroller">
+        <ul class="mail-list" id="mailList">
+          <!-- JS 动态注入 -->
+        </ul>
+        <div class="empty-state" id="emptyState" style="display:none">
+          <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
+            <rect x="8" y="12" width="32" height="24" rx="2" stroke="#aaa" stroke-width="1.8"/>
+            <path d="M8 17l16 10 16-10" stroke="#aaa" stroke-width="1.8"/>
+          </svg>
+          <p>没有符合条件的邮件</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========== READING PANE ========== -->
+    <main class="reading-pane" id="readingPane">
+      <!-- Welcome / no-selection state -->
+      <div class="reading-empty" id="readingEmpty">
+        <svg width="64" height="64" viewBox="0 0 64 64" fill="none">
+          <rect x="8" y="16" width="48" height="32" rx="3" stroke="#c8c8c8" stroke-width="2"/>
+          <path d="M8 24l24 14 24-14" stroke="#c8c8c8" stroke-width="2"/>
+        </svg>
+        <p class="reading-empty-title">选择一封邮件以查看</p>
+        <p class="reading-empty-sub">点击左侧列表中的任意邮件</p>
+      </div>
+
+      <!-- Mail detail (hidden until a mail is selected) -->
+      <div class="reading-content" id="readingContent" style="display:none">
+        <div class="reading-toolbar">
+          <button class="reading-action-btn" id="btnReply" title="回复">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <path d="M6 3L2 7l4 4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M2 7h9a3 3 0 010 6H8" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+            </svg>
+            <span>回复</span>
+          </button>
+          <button class="reading-action-btn" id="btnForward" title="转发">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <path d="M10 3l4 4-4 4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M14 7H5a3 3 0 000 6h3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+            </svg>
+            <span>转发</span>
+          </button>
+          <div class="reading-action-divider"></div>
+          <button class="reading-action-btn" id="btnDelete" title="删除">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <path d="M6 3h4l.5 1H14v1H2V4h3.5L6 3z" stroke="currentColor" stroke-width="1.3"/>
+              <rect x="3" y="5" width="10" height="9" rx="1" stroke="currentColor" stroke-width="1.3"/>
+              <line x1="6.5" y1="7.5" x2="6.5" y2="11" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+              <line x1="9.5" y1="7.5" x2="9.5" y2="11" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+            </svg>
+            <span>删除</span>
+          </button>
+          <button class="reading-action-btn" id="btnArchive" title="归档">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <rect x="1" y="2" width="14" height="3" rx="0.8" stroke="currentColor" stroke-width="1.3"/>
+              <path d="M2 5h12v8a1 1 0 01-1 1H3a1 1 0 01-1-1V5z" stroke="currentColor" stroke-width="1.3"/>
+              <line x1="6" y1="8.5" x2="10" y2="8.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
+            </svg>
+            <span>归档</span>
+          </button>
+          <button class="reading-action-btn" id="btnStar" title="加星标">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" id="starIcon">
+              <path d="M8 2l1.6 4.9H15l-4.3 3.1 1.6 4.9L8 11.8l-4.3 3.1 1.6-4.9L1 6.9h5.4L8 2z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/>
+            </svg>
+            <span>星标</span>
+          </button>
+          <button class="reading-action-btn reading-action-btn--more" id="btnMore" title="更多操作">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <circle cx="3" cy="8" r="1.2" fill="currentColor"/>
+              <circle cx="8" cy="8" r="1.2" fill="currentColor"/>
+              <circle cx="13" cy="8" r="1.2" fill="currentColor"/>
+            </svg>
+            <span>更多</span>
+          </button>
+        </div>
+
+        <div class="reading-body-wrap">
+          <div class="reading-subject-row">
+            <h1 class="reading-subject" id="readingSubject"></h1>
+            <div class="reading-tags" id="readingTags"></div>
+          </div>
+
+          <div class="reading-meta">
+            <div class="reading-sender-avatar" id="readingSenderAvatar"></div>
+            <div class="reading-meta-text">
+              <div class="reading-meta-top">
+                <span class="reading-sender-name" id="readingSenderName"></span>
+                <span class="reading-date" id="readingDate"></span>
+              </div>
+              <div class="reading-meta-bottom">
+                <span class="reading-to-label">收件人：</span>
+                <span class="reading-recipients" id="readingRecipients"></span>
+              </div>
+            </div>
+          </div>
+
+          <div class="reading-attachments" id="readingAttachments" style="display:none">
+            <div class="attachments-label">
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                <path d="M12 6.5l-5.5 5.5A3.5 3.5 0 011 7L7 1a2.5 2.5 0 013.5 3.5L4 11a1.5 1.5 0 01-2-2l5-5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
+              </svg>
+              附件
+            </div>
+            <div class="attachments-list" id="attachmentsList"></div>
+          </div>
+
+          <div class="reading-body" id="readingBody"></div>
+        </div>
+      </div>
+    </main>
+
+  </div><!-- /.layout -->
+
+  <script src="scripts/app.js"></script>
+</body>
+</html>
