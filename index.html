@@ -52,6 +52,10 @@
           </svg>
         </button>
       </div>
+      <div class="search-ai-status" id="searchAiStatus" style="display:none">
+        <span class="search-ai-dot"></span>
+        <span id="searchAiStatusText">AI 搜索中…</span>
+      </div>
     </div>
 
     <div class="topbar-right">
@@ -292,6 +296,9 @@
 
   </div><!-- /.layout -->
 
+  <script src="scripts/config.js"></script>
+  <script src="scripts/embeddings.js" onerror="console.warn('[MailMind AI] embeddings.js 未找到，将在首次搜索时实时生成向量。')"></script>
+  <script src="scripts/ai-search.js"></script>
   <script src="scripts/app.js"></script>
 </body>
 </html>

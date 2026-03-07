@@ -31,6 +31,11 @@ const mailData = [
     attachments: [],
     date: new Date('2026-03-06T09:14:00'),
     tags: ['urgent', 'work'],
+    thread_id: 'thread_project_deadline',
+    category: 'work',
+    priority: 'high',
+    entities: { persons: ['Prof. Zhang Wei'], dates: ['2026-03-08'], actions: ['complete prototype', 'attend demo presentation'] },
+    embedding: null,
   },
   {
     id: 2,
@@ -50,6 +55,11 @@ const mailData = [
     attachments: [],
     date: new Date('2026-03-06T08:47:00'),
     tags: ['work'],
+    thread_id: 'thread_pr_review',
+    category: 'work',
+    priority: 'normal',
+    entities: { persons: ['alice-dev'], dates: [], actions: ['review pull request', 'merge PR'] },
+    embedding: null,
   },
   {
     id: 3,
@@ -73,6 +83,11 @@ const mailData = [
     ],
     date: new Date('2026-03-05T17:32:00'),
     tags: ['work', 'urgent'],
+    thread_id: 'thread_ta_feedback',
+    category: 'work',
+    priority: 'high',
+    entities: { persons: ['李明'], dates: [], actions: ['reply to feedback', 'improve search UI', 'adjust layout density'] },
+    embedding: null,
   },
   {
     id: 4,
@@ -93,6 +108,11 @@ const mailData = [
     attachments: [],
     date: new Date('2026-03-05T07:00:00'),
     tags: ['info'],
+    thread_id: null,
+    category: 'notification',
+    priority: 'low',
+    entities: { persons: [], dates: [], actions: [] },
+    embedding: null,
   },
   {
     id: 5,
@@ -112,6 +132,11 @@ const mailData = [
     attachments: [],
     date: new Date('2026-03-04T16:30:00'),
     tags: ['work'],
+    thread_id: 'thread_pr_review',
+    category: 'notification',
+    priority: 'normal',
+    entities: { persons: ['alice-dev'], dates: [], actions: ['review PR'] },
+    embedding: null,
   },
   {
     id: 6,
@@ -131,6 +156,11 @@ const mailData = [
     attachments: [],
     date: new Date('2026-03-03T11:05:00'),
     tags: ['work'],
+    thread_id: null,
+    category: 'notification',
+    priority: 'normal',
+    entities: { persons: ['alice-dev'], dates: [], actions: ['view Figma file', 'add comments'] },
+    embedding: null,
   },
   {
     id: 7,
@@ -153,6 +183,11 @@ const mailData = [
     ],
     date: new Date('2026-03-05T06:20:00'),
     tags: ['finance'],
+    thread_id: null,
+    category: 'finance',
+    priority: 'high',
+    entities: { persons: [], dates: ['2026-03-25'], actions: ['pay credit card bill ¥1234.56'] },
+    embedding: null,
   },
   {
     id: 8,
@@ -173,6 +208,11 @@ const mailData = [
     attachments: [],
     date: new Date('2026-03-04T22:11:00'),
     tags: ['info'],
+    thread_id: null,
+    category: 'notification',
+    priority: 'low',
+    entities: { persons: ['devuser_42'], dates: [], actions: [] },
+    embedding: null,
   },
   {
     id: 9,
@@ -193,6 +233,11 @@ const mailData = [
     attachments: [],
     date: new Date('2026-03-05T14:22:00'),
     tags: ['personal'],
+    thread_id: 'thread_coffee_sarah',
+    category: 'personal',
+    priority: 'normal',
+    entities: { persons: ['Sarah Chen'], dates: ['2026-03-08'], actions: ['confirm coffee meeting time'] },
+    embedding: null,
   },
   {
     id: 10,
@@ -213,6 +258,11 @@ const mailData = [
     attachments: [],
     date: new Date('2026-03-04T09:15:00'),
     tags: ['info'],
+    thread_id: null,
+    category: 'notification',
+    priority: 'low',
+    entities: { persons: [], dates: [], actions: [] },
+    embedding: null,
   },
   {
     id: 11,
@@ -236,6 +286,11 @@ const mailData = [
     ],
     date: new Date('2026-03-06T08:00:00'),
     tags: ['work', 'urgent'],
+    thread_id: null,
+    category: 'work',
+    priority: 'high',
+    entities: { persons: [], dates: ['2026-03-15'], actions: ['complete benefits enrollment', 'log in to HR portal'] },
+    embedding: null,
   },
   {
     id: 12,
@@ -256,6 +311,11 @@ const mailData = [
     attachments: [],
     date: new Date('2026-03-04T05:30:00'),
     tags: ['personal'],
+    thread_id: null,
+    category: 'notification',
+    priority: 'low',
+    entities: { persons: [], dates: [], actions: [] },
+    embedding: null,
   },
   {
     id: 13,
@@ -276,6 +336,11 @@ const mailData = [
     attachments: [],
     date: new Date('2026-03-05T23:45:00'),
     tags: ['work', 'urgent'],
+    thread_id: null,
+    category: 'work',
+    priority: 'high',
+    entities: { persons: [], dates: [], actions: ['check AWS EC2 usage', 'set up billing alerts'] },
+    embedding: null,
   },
   {
     id: 14,
@@ -296,6 +361,11 @@ const mailData = [
     attachments: [],
     date: new Date('2026-03-03T18:20:00'),
     tags: ['personal'],
+    thread_id: 'thread_family_dinner',
+    category: 'personal',
+    priority: 'normal',
+    entities: { persons: ['Mom'], dates: ['2026-03-07'], actions: ['go home for dinner', 'bring jacket'] },
+    embedding: null,
   },
   {
     id: 15,
@@ -316,6 +386,11 @@ const mailData = [
     attachments: [],
     date: new Date('2026-03-02T12:00:00'),
     tags: ['info'],
+    thread_id: null,
+    category: 'notification',
+    priority: 'low',
+    entities: { persons: [], dates: [], actions: [] },
+    embedding: null,
   },
   {
     id: 16,
@@ -338,6 +413,11 @@ const mailData = [
     ],
     date: new Date('2026-03-06T07:30:00'),
     tags: ['finance'],
+    thread_id: null,
+    category: 'finance',
+    priority: 'normal',
+    entities: { persons: [], dates: ['2026-03-06'], actions: [] },
+    embedding: null,
   },
   {
     id: 17,
@@ -358,6 +438,11 @@ const mailData = [
     attachments: [],
     date: new Date('2026-03-05T06:00:00'),
     tags: ['info'],
+    thread_id: null,
+    category: 'notification',
+    priority: 'low',
+    entities: { persons: [], dates: [], actions: [] },
+    embedding: null,
   },
   {
     id: 18,
@@ -381,6 +466,220 @@ const mailData = [
     ],
     date: new Date('2026-03-04T11:45:00'),
     tags: ['work'],
+    thread_id: 'thread_design_review',
+    category: 'work',
+    priority: 'normal',
+    entities: { persons: ['Alex Rivera'], dates: [], actions: ['review design feedback', 'apply spacing changes'] },
+    embedding: null,
+  },
+  /* ── 收件箱 — 新增 ── */
+  {
+    id: 19,
+    folder: 'inbox',
+    unread: true,
+    flagged: false,
+    starred: false,
+    from: { name: 'Google Calendar', email: 'calendar-notification@google.com', color: '#4285f4' },
+    to: ['you@mailmind.app'],
+    subject: 'Invitation: MailMind Sprint Planning — Mon Mar 9, 10:00–11:00',
+    preview: 'alice-dev has invited you to MailMind Sprint Planning on Monday March 9 at 10:00 AM. Video call link included.',
+    body: [
+      { type: 'text', content: 'You have been invited to the following event.' },
+      { type: 'text', content: 'MailMind Sprint Planning\nDate: Monday, March 9, 2026\nTime: 10:00 AM – 11:00 AM (GMT+8)\nOrganizer: alice-dev@example.com\nLocation: Google Meet — meet.google.com/xyz-abc-123' },
+      { type: 'text', content: 'Agenda:\n1. Review last sprint deliverables\n2. Prioritize AI search feature tickets\n3. Assign Week 2 tasks\n\nPlease RSVP by March 8.' },
+    ],
+    signature: 'Google Calendar',
+    attachments: [
+      { name: 'sprint-planning.ics', size: '2 KB', type: 'file' },
+    ],
+    date: new Date('2026-03-06T12:00:00'),
+    tags: ['work'],
+    thread_id: 'thread_sprint_planning',
+    category: 'work',
+    priority: 'high',
+    entities: { persons: ['alice-dev'], dates: ['2026-03-09'], actions: ['RSVP to sprint planning meeting', 'prepare sprint review'] },
+    embedding: null,
+  },
+  {
+    id: 20,
+    folder: 'inbox',
+    unread: true,
+    flagged: true,
+    starred: false,
+    from: { name: 'TechCorp HR', email: 'recruiting@techcorp.com', color: '#0d6efd' },
+    to: ['you@mailmind.app'],
+    subject: '面试邀请 — 前端工程师（AI 产品方向）@ TechCorp',
+    preview: '您好，感谢您投递前端工程师职位。我们对您的背景很感兴趣，诚邀您参加第一轮技术面试……',
+    body: [
+      { type: 'text', content: '您好，' },
+      { type: 'text', content: '感谢您投递 TechCorp 前端工程师（AI 产品方向）职位。我们的团队仔细阅读了您的简历和作品集，对您在 MailMind 项目中的 AI 搜索设计非常感兴趣。' },
+      { type: 'text', content: '诚邀您参加第一轮技术面试：\n\n时间：2026年3月12日（周四）14:00–15:30\n形式：视频面试（Zoom）\n面试官：Engineering Manager + Senior Frontend Engineer\nZoom 链接：zoom.us/j/98765432100\n\n面试内容将涵盖：前端架构设计、AI 功能集成、用户体验思维。' },
+      { type: 'text', content: '请在3月10日前回复确认是否可以参加，或告知您方便的时间段以便重新安排。期待与您的交流！' },
+    ],
+    signature: 'Lisa Wang\nTalent Acquisition @ TechCorp\nrecruiting@techcorp.com',
+    attachments: [
+      { name: 'TechCorp_JD_Frontend_AI.pdf', size: '340 KB', type: 'pdf' },
+    ],
+    date: new Date('2026-03-06T10:30:00'),
+    tags: ['work', 'urgent'],
+    thread_id: 'thread_job_interview',
+    category: 'work',
+    priority: 'high',
+    entities: { persons: ['Lisa Wang'], dates: ['2026-03-10', '2026-03-12'], actions: ['confirm interview attendance', 'prepare for technical interview'] },
+    embedding: null,
+  },
+  {
+    id: 21,
+    folder: 'inbox',
+    unread: true,
+    flagged: false,
+    starred: false,
+    from: { name: '京东物流', email: 'logistics@jd.com', color: '#e1251b' },
+    to: ['you@mailmind.app'],
+    subject: '【京东快递】您的包裹已发货 — 机械键盘 × 1',
+    preview: '您的订单已发货，预计3月8日送达。快递单号：JD2026030600123456，可在京东 App 实时追踪。',
+    body: [
+      { type: 'text', content: '尊敬的用户，您好！' },
+      { type: 'text', content: '您的订单已由京东自营仓发货，详情如下：\n\n订单号：JD2026-1122334\n商品：HHKB Professional Hybrid 机械键盘 × 1\n快递单号：JD2026030600123456\n承运商：京东物流\n预计送达：2026年3月8日（周日）' },
+      { type: 'text', content: '您可以在京东 App 首页 → "我的订单" 中实时查看物流状态。如有问题请联系客服。' },
+    ],
+    signature: '京东物流\n客服热线：950618',
+    attachments: [],
+    date: new Date('2026-03-06T06:00:00'),
+    tags: ['personal'],
+    thread_id: null,
+    category: 'personal',
+    priority: 'normal',
+    entities: { persons: [], dates: ['2026-03-08'], actions: ['track package delivery'] },
+    embedding: null,
+  },
+  {
+    id: 22,
+    folder: 'inbox',
+    unread: true,
+    flagged: false,
+    starred: false,
+    from: { name: 'Alice Dev', email: 'alice-dev@example.com', color: '#6f42c1' },
+    to: ['you@mailmind.app'],
+    subject: 'Re: PR #3 — 回复你的问题',
+    preview: '关于你问的两个点：中文字符高亮用的是正则 unicode flag，debounce 设的是 300ms，你觉得可以吗？',
+    body: [
+      { type: 'text', content: '嗨，' },
+      { type: 'text', content: '关于你在草稿里提到的两个问题，我来回复一下：\n\n1. 中文字符高亮：我用的是正则表达式 + /u flag（unicode 模式），所以中文、日文、韩文都可以正确匹配和高亮，不会出现截断的问题。\n2. Debounce 延迟：目前设的是 300ms，我觉得对于搜索来说比较合适。你在 app.js 里设的是 200ms，要不要统一一下？' },
+      { type: 'text', content: '另外，我在 PR 里还加了一个 "no results" 的空状态组件，你觉得这个设计方向对吗？有时间可以过一下。' },
+    ],
+    signature: 'Alice\nalice-dev@example.com',
+    attachments: [],
+    date: new Date('2026-03-06T15:10:00'),
+    tags: ['work'],
+    thread_id: 'thread_pr_review',
+    category: 'work',
+    priority: 'normal',
+    entities: { persons: ['Alice Dev'], dates: [], actions: ['review PR comment', 'decide on debounce timing', 'merge PR'] },
+    embedding: null,
+  },
+  {
+    id: 23,
+    folder: 'inbox',
+    unread: true,
+    flagged: true,
+    starred: false,
+    from: { name: '支付宝', email: 'no-reply@alipay.com', color: '#1677ff' },
+    to: ['you@mailmind.app'],
+    subject: '您有一笔 ¥2,450 的转账待确认',
+    preview: '您的朋友 David Li 向您发起了 ¥2,450 的转账，请在24小时内登录支付宝确认收款。',
+    body: [
+      { type: 'text', content: '尊敬的用户，' },
+      { type: 'text', content: '您的联系人 David Li（david.li@university.edu）向您发起了一笔转账，等待您确认。\n\n转账金额：¥ 2,450.00\n备注：项目组服务器费用分摊（2月+3月）\n转账时间：2026-03-06 14:22\n有效期：24小时内' },
+      { type: 'text', content: '请登录支付宝 App 或网页端确认收款。超时未确认将自动退回。' },
+    ],
+    signature: '支付宝安全团队\n如非本人操作请忽略',
+    attachments: [],
+    date: new Date('2026-03-06T14:25:00'),
+    tags: ['finance'],
+    thread_id: null,
+    category: 'finance',
+    priority: 'high',
+    entities: { persons: ['David Li'], dates: [], actions: ['confirm Alipay transfer ¥2450'] },
+    embedding: null,
+  },
+  {
+    id: 24,
+    folder: 'inbox',
+    unread: true,
+    flagged: true,
+    starred: true,
+    from: { name: 'Prof. Wang Fang', email: 'wangfang@lab.edu', color: '#5c2d91' },
+    to: ['you@mailmind.app'],
+    subject: '关于你的毕业论文开题报告',
+    preview: '同学，你的开题报告初稿我看过了，方向没问题，但有几个地方需要在下周提交前修改……',
+    body: [
+      { type: 'text', content: '同学，' },
+      { type: 'text', content: '你的毕业论文开题报告初稿我已经看过了，研究方向（AI 邮件管理系统的用户体验设计）是可行的，相关工作综述也做得不错。但有几个地方需要在正式提交前修改：' },
+      { type: 'text', content: '1. 研究问题的表述：目前写的太宽泛，需要聚焦到"自然语言搜索对邮件处理效率的影响"这个具体问题上。\n2. 实验设计：需要增加对照组设计，说明如何和传统关键词搜索做对比评估。\n3. 时间线：把各阶段的时间节点列得更细，评委会关注这个。' },
+      { type: 'text', content: '修改好后请在3月13日（周五）下午5点前发给我。如有问题周四来实验室找我，下午2点以后都在。' },
+    ],
+    signature: 'Wang Fang\n人机交互实验室\nlab.edu',
+    attachments: [
+      { name: 'thesis_proposal_comments.pdf', size: '280 KB', type: 'pdf' },
+    ],
+    date: new Date('2026-03-06T16:00:00'),
+    tags: ['work', 'urgent'],
+    thread_id: 'thread_thesis',
+    category: 'work',
+    priority: 'high',
+    entities: { persons: ['Prof. Wang Fang'], dates: ['2026-03-13'], actions: ['revise thesis proposal', 'submit by Friday 5pm', 'visit lab Thursday'] },
+    embedding: null,
+  },
+  {
+    id: 25,
+    folder: 'inbox',
+    unread: false,
+    flagged: false,
+    starred: false,
+    from: { name: 'Vercel', email: 'no-reply@vercel.com', color: '#000000' },
+    to: ['you@mailmind.app'],
+    subject: 'Deploy succeeded — mailmind.vercel.app',
+    preview: 'Your deployment to mailmind.vercel.app is live. Commit: feat: upgrade data layer with AI-ready schema (a3f8c21)',
+    body: [
+      { type: 'text', content: 'Deployment succeeded' },
+      { type: 'text', content: 'Project: mailmind\nEnvironment: Production\nURL: https://mailmind.vercel.app\nCommit: a3f8c21 — feat: upgrade data layer with AI-ready schema\nBranch: main\nDuration: 42s' },
+      { type: 'text', content: 'Your project is live. Visit mailmind.vercel.app to see your changes.' },
+    ],
+    signature: 'Vercel\nvercel.com',
+    attachments: [],
+    date: new Date('2026-03-06T17:45:00'),
+    tags: ['work'],
+    thread_id: null,
+    category: 'notification',
+    priority: 'low',
+    entities: { persons: [], dates: [], actions: [] },
+    embedding: null,
+  },
+  {
+    id: 26,
+    folder: 'inbox',
+    unread: true,
+    flagged: false,
+    starred: false,
+    from: { name: 'David Li', email: 'david.li@university.edu', color: '#00b4d8' },
+    to: ['you@mailmind.app', 'alice-dev@example.com', 'sarah.chen@startup.io'],
+    subject: '这周组会谁来做分享？',
+    preview: '大家好，本周四下午3点有我们组的例会，还没有分享人。有没有人愿意讲一下自己最近在做的项目？',
+    body: [
+      { type: 'text', content: '大家好，' },
+      { type: 'text', content: '本周四（3月12日）下午3点有我们组的双周例会，今次还没有分享人。有没有人愿意讲一下自己最近在做的东西？20分钟左右，轻松的氛围，不用做 slides。' },
+      { type: 'text', content: '我觉得 MailMind 的 AI 搜索这个方向挺有意思的，如果你愿意的话可以分享一下思路？回复一下让大家知道。' },
+    ],
+    signature: 'David\ndavid.li@university.edu',
+    attachments: [],
+    date: new Date('2026-03-06T13:00:00'),
+    tags: ['work', 'personal'],
+    thread_id: 'thread_group_meeting',
+    category: 'work',
+    priority: 'normal',
+    entities: { persons: ['David Li', 'Alice Dev', 'Sarah Chen'], dates: ['2026-03-12'], actions: ['reply to group meeting invitation', 'prepare short presentation'] },
+    embedding: null,
   },
 
   /* ── 草稿箱 ── */
@@ -403,6 +702,11 @@ const mailData = [
     attachments: [],
     date: new Date('2026-03-06T10:05:00'),
     tags: ['work'],
+    thread_id: 'thread_project_deadline',
+    category: 'work',
+    priority: 'high',
+    entities: { persons: ['Prof. Zhang Wei'], dates: [], actions: [] },
+    embedding: null,
   },
   {
     id: 102,
@@ -422,6 +726,11 @@ const mailData = [
     attachments: [],
     date: new Date('2026-03-05T20:48:00'),
     tags: ['work'],
+    thread_id: 'thread_pr_review',
+    category: 'work',
+    priority: 'normal',
+    entities: { persons: ['Alice Dev'], dates: [], actions: [] },
+    embedding: null,
   },
   {
     id: 103,
@@ -441,6 +750,63 @@ const mailData = [
     attachments: [],
     date: new Date('2026-03-06T11:20:00'),
     tags: ['personal'],
+    thread_id: 'thread_coffee_sarah',
+    category: 'personal',
+    priority: 'normal',
+    entities: { persons: ['Sarah Chen'], dates: [], actions: [] },
+    embedding: null,
+  },
+  {
+    id: 104,
+    folder: 'drafts',
+    unread: true,
+    flagged: false,
+    starred: false,
+    from: { name: '（草稿）', email: 'you@mailmind.app', color: '#8a8886' },
+    to: ['recruiting@techcorp.com'],
+    subject: 'Re: 面试邀请 — 确认参加 3月12日面试',
+    preview: '您好，感谢邀请，我确认参加3月12日14:00的技术面试。请问面试前需要准备任何材料吗……',
+    body: [
+      { type: 'text', content: '您好 Lisa，' },
+      { type: 'text', content: '感谢 TechCorp 的面试邀请！我确认可以参加3月12日（周四）14:00–15:30 的技术视频面试。' },
+      { type: 'text', content: '请问面试前需要准备任何材料，比如代码样例或项目演示吗？另外，面试当天请通过 Zoom 链接直接进入还是需要等待邀请链接？' },
+    ],
+    signature: '',
+    attachments: [],
+    date: new Date('2026-03-06T18:00:00'),
+    tags: ['work'],
+    thread_id: 'thread_job_interview',
+    category: 'work',
+    priority: 'high',
+    entities: { persons: ['Lisa Wang'], dates: ['2026-03-12'], actions: [] },
+    embedding: null,
+  },
+  {
+    id: 105,
+    folder: 'drafts',
+    unread: true,
+    flagged: false,
+    starred: false,
+    from: { name: '（草稿）', email: 'you@mailmind.app', color: '#8a8886' },
+    to: ['wangfang@lab.edu'],
+    subject: 'Re: 开题报告修改版',
+    preview: '王老师，您好，感谢您的详细批注。我已经按照意见修改了研究问题表述和实验设计部分……',
+    body: [
+      { type: 'text', content: '王老师，您好，' },
+      { type: 'text', content: '感谢您详细的批注意见！我已经按照建议完成了以下修改：\n1. 研究问题已聚焦到"自然语言搜索对邮件检索效率的影响"\n2. 增加了 A/B 测试的对照组设计说明\n3. 时间线已细化到每个里程碑节点' },
+      { type: 'text', content: '修改版已附在本邮件中，请您审阅。如还有需要调整的地方，请告知。' },
+    ],
+    signature: '',
+    attachments: [
+      { name: 'thesis_proposal_v2.pdf', size: '420 KB', type: 'pdf' },
+    ],
+    date: new Date('2026-03-07T09:00:00'),
+    tags: ['work'],
+    thread_id: 'thread_thesis',
+    category: 'work',
+    priority: 'high',
+    entities: { persons: ['Prof. Wang Fang'], dates: [], actions: [] },
+    embedding: null,
   },
 
   /* ── 已发送 ── */
@@ -466,6 +832,11 @@ const mailData = [
     ],
     date: new Date('2026-03-04T19:30:00'),
     tags: ['work'],
+    thread_id: 'thread_ta_feedback',
+    category: 'work',
+    priority: 'normal',
+    entities: { persons: ['李明'], dates: [], actions: [] },
+    embedding: null,
   },
   {
     id: 202,
@@ -485,6 +856,11 @@ const mailData = [
     attachments: [],
     date: new Date('2026-03-03T20:15:00'),
     tags: ['personal'],
+    thread_id: 'thread_family_dinner',
+    category: 'personal',
+    priority: 'normal',
+    entities: { persons: ['Mom'], dates: ['2026-03-07'], actions: [] },
+    embedding: null,
   },
   {
     id: 203,
@@ -507,6 +883,86 @@ const mailData = [
     ],
     date: new Date('2026-03-04T16:00:00'),
     tags: ['work'],
+    thread_id: 'thread_design_review',
+    category: 'work',
+    priority: 'normal',
+    entities: { persons: ['Alex Rivera'], dates: [], actions: [] },
+    embedding: null,
+  },
+  {
+    id: 204,
+    folder: 'sent',
+    unread: false,
+    flagged: false,
+    starred: false,
+    from: { name: 'You', email: 'you@mailmind.app', color: '#c43e00' },
+    to: ['alice-dev@example.com'],
+    subject: 'Re: PR #3 — LGTM，可以 merge',
+    preview: 'Alice，看完了！整体没问题，debounce 统一用 300ms，中文高亮也测过了。LGTM，可以 merge！',
+    body: [
+      { type: 'text', content: 'Alice，' },
+      { type: 'text', content: '看完了！整体代码质量不错，逻辑清晰。我做了以下测试：\n• 中文关键词高亮：正常\n• 英文混合搜索：正常\n• debounce 300ms：我这边也改成统一 300ms 了\n• 空状态组件：设计很好，和现有风格一致' },
+      { type: 'text', content: 'LGTM 👍 可以 merge 到 main。谢谢你的工作！' },
+    ],
+    signature: 'YS',
+    attachments: [],
+    date: new Date('2026-03-06T17:00:00'),
+    tags: ['work'],
+    thread_id: 'thread_pr_review',
+    category: 'work',
+    priority: 'normal',
+    entities: { persons: ['Alice Dev'], dates: [], actions: [] },
+    embedding: null,
+  },
+  {
+    id: 205,
+    folder: 'sent',
+    unread: false,
+    flagged: false,
+    starred: false,
+    from: { name: 'You', email: 'you@mailmind.app', color: '#c43e00' },
+    to: ['david.li@university.edu'],
+    subject: 'Re: 这周组会谁来做分享？',
+    preview: 'David，我来吧！我可以分享一下 MailMind AI 搜索的设计思路，大概20分钟。',
+    body: [
+      { type: 'text', content: 'David，' },
+      { type: 'text', content: '我来吧！我最近正好在做 MailMind 的 AI 语义搜索功能，可以借这个机会分享一下设计思路和技术选型，大概 20 分钟。' },
+      { type: 'text', content: '周四 3点见。' },
+    ],
+    signature: 'YS',
+    attachments: [],
+    date: new Date('2026-03-06T14:00:00'),
+    tags: ['work'],
+    thread_id: 'thread_group_meeting',
+    category: 'work',
+    priority: 'normal',
+    entities: { persons: ['David Li'], dates: ['2026-03-12'], actions: [] },
+    embedding: null,
+  },
+  {
+    id: 206,
+    folder: 'sent',
+    unread: false,
+    flagged: false,
+    starred: false,
+    from: { name: 'You', email: 'you@mailmind.app', color: '#c43e00' },
+    to: ['recruiting@techcorp.com'],
+    subject: 'Re: 面试邀请 — 确认参加',
+    preview: 'Hi Lisa, 3月12日14:00 我可以参加，Zoom 链接收到了。请问面试前需要准备什么材料吗？',
+    body: [
+      { type: 'text', content: 'Hi Lisa,' },
+      { type: 'text', content: 'Thank you for the invitation! I confirm my availability for the technical interview on Thursday, March 12 at 2:00 PM. I have the Zoom link ready.' },
+      { type: 'text', content: 'Could you let me know if there are any materials I should prepare in advance, such as code samples or a project walkthrough? Looking forward to the conversation!' },
+    ],
+    signature: 'YS\nyou@mailmind.app',
+    attachments: [],
+    date: new Date('2026-03-06T11:00:00'),
+    tags: ['work'],
+    thread_id: 'thread_job_interview',
+    category: 'work',
+    priority: 'normal',
+    entities: { persons: ['Lisa Wang'], dates: ['2026-03-12'], actions: [] },
+    embedding: null,
   },
 
   /* ── 垃圾邮件 ── */
@@ -528,6 +984,11 @@ const mailData = [
     attachments: [],
     date: new Date('2026-03-03T02:19:00'),
     tags: [],
+    thread_id: null,
+    category: 'spam',
+    priority: 'low',
+    entities: { persons: [], dates: [], actions: [] },
+    embedding: null,
   },
   {
     id: 302,
@@ -547,6 +1008,11 @@ const mailData = [
     attachments: [],
     date: new Date('2026-03-02T14:33:00'),
     tags: [],
+    thread_id: null,
+    category: 'spam',
+    priority: 'low',
+    entities: { persons: [], dates: [], actions: [] },
+    embedding: null,
   },
   {
     id: 303,
@@ -566,6 +1032,60 @@ const mailData = [
     attachments: [],
     date: new Date('2026-03-01T09:00:00'),
     tags: [],
+    thread_id: null,
+    category: 'spam',
+    priority: 'low',
+    entities: { persons: [], dates: [], actions: [] },
+    embedding: null,
+  },
+  {
+    id: 304,
+    folder: 'junk',
+    unread: false,
+    flagged: false,
+    starred: false,
+    from: { name: '双十一大促销', email: 'promo@shopscam.cn', color: '#8a8886' },
+    to: ['you@mailmind.app'],
+    subject: '【限时特惠】全场 5 折！仅剩 2 小时，手慢无！',
+    preview: '亲爱的会员，品牌清仓大促，全场低至 5 折，满¥199减¥50，下单即赠神秘礼品……',
+    body: [
+      { type: 'text', content: '亲爱的尊贵会员！' },
+      { type: 'text', content: '品牌清仓大促销正式开启！全场商品低至 5 折，限时 2 小时。\n\n• 满 ¥199 减 ¥50\n• 满 ¥399 减 ¥120\n• 下单即赠神秘礼品一份\n\n点击下方链接立即抢购（链接已过期）' },
+    ],
+    signature: '',
+    attachments: [],
+    date: new Date('2026-03-05T08:00:00'),
+    tags: [],
+    thread_id: null,
+    category: 'spam',
+    priority: 'low',
+    entities: { persons: [], dates: [], actions: [] },
+    embedding: null,
+  },
+  {
+    id: 305,
+    folder: 'junk',
+    unread: false,
+    flagged: false,
+    starred: false,
+    from: { name: 'Apple Support', email: 'noreply@apple-id-verify.net', color: '#8a8886' },
+    to: ['you@mailmind.app'],
+    subject: 'Your Apple ID has been locked — Verify immediately',
+    preview: 'We have detected suspicious activity on your Apple ID. Your account has been temporarily locked. Verify now to restore access.',
+    body: [
+      { type: 'text', content: 'Dear Apple Customer,' },
+      { type: 'text', content: 'We have detected suspicious sign-in activity on your Apple ID associated with this email address. For your security, your account has been temporarily locked.' },
+      { type: 'text', content: 'To restore access, please verify your identity within 24 hours by clicking the link below: http://apple-id-verify.net/unlock (DO NOT click — phishing link)' },
+    ],
+    signature: 'Apple Support Team',
+    attachments: [],
+    date: new Date('2026-03-04T03:15:00'),
+    tags: [],
+    thread_id: null,
+    category: 'spam',
+    priority: 'low',
+    entities: { persons: [], dates: [], actions: [] },
+    embedding: null,
   },
 
   /* ── 归档 ── */
@@ -589,6 +1109,11 @@ const mailData = [
     ],
     date: new Date('2026-02-20T10:00:00'),
     tags: ['work'],
+    thread_id: 'thread_project_deadline',
+    category: 'work',
+    priority: 'normal',
+    entities: { persons: ['Prof. Zhang Wei'], dates: [], actions: [] },
+    embedding: null,
   },
   {
     id: 402,
@@ -608,6 +1133,11 @@ const mailData = [
     attachments: [],
     date: new Date('2026-02-01T08:00:00'),
     tags: ['personal'],
+    thread_id: null,
+    category: 'notification',
+    priority: 'low',
+    entities: { persons: [], dates: [], actions: [] },
+    embedding: null,
   },
   {
     id: 403,
@@ -627,6 +1157,418 @@ const mailData = [
     attachments: [],
     date: new Date('2026-02-15T07:00:00'),
     tags: ['work'],
+    thread_id: null,
+    category: 'notification',
+    priority: 'low',
+    entities: { persons: [], dates: [], actions: [] },
+    embedding: null,
+  },
+  {
+    id: 404,
+    folder: 'archive',
+    unread: false,
+    flagged: false,
+    starred: false,
+    from: { name: 'GitHub Actions', email: 'noreply@github.com', color: '#24292f' },
+    to: ['you@mailmind.app'],
+    subject: '[mailmind] CI failed on branch feature/search — build #47',
+    preview: 'Build #47 failed on feature/search. Error: ReferenceError: highlightText is not defined at scripts/search.js:42.',
+    body: [
+      { type: 'text', content: 'Build #47 failed on branch feature/search.' },
+      { type: 'text', content: 'Error details:\nReferenceError: highlightText is not defined\n  at scripts/search.js:42:5\n  at HTMLInputElement.<anonymous> (scripts/app.js:1044:7)\n\nStep failed: Run tests\nDuration: 1m 12s' },
+      { type: 'text', content: 'View the full build log on GitHub Actions.' },
+    ],
+    signature: 'GitHub Actions\nnoreply@github.com',
+    attachments: [],
+    date: new Date('2026-02-18T22:30:00'),
+    tags: ['work'],
+    thread_id: null,
+    category: 'notification',
+    priority: 'low',
+    entities: { persons: [], dates: [], actions: [] },
+    embedding: null,
+  },
+  {
+    id: 405,
+    folder: 'archive',
+    unread: false,
+    flagged: false,
+    starred: false,
+    from: { name: '支付宝', email: 'no-reply@alipay.com', color: '#1677ff' },
+    to: ['you@mailmind.app'],
+    subject: '你的 2025 年度账单来了',
+    preview: '2025年你共消费 ¥28,450，支付了 1,203 笔。最常消费品类：餐饮 > 数码 > 出行。',
+    body: [
+      { type: 'text', content: '你的 2025 年度消费账单' },
+      { type: 'text', content: '2025年全年数据：\n\n总消费：¥ 28,450.00\n总笔数：1,203 笔\n最高单笔：¥ 3,200（11月数码产品）\n\n消费品类排名：\n1. 餐饮外卖 — ¥7,820\n2. 数码电子 — ¥5,200\n3. 出行交通 — ¥3,100' },
+      { type: 'text', content: '感谢你 2025 年对支付宝的支持，祝 2026 年一切顺利！' },
+    ],
+    signature: '支付宝\nAlipay.com',
+    attachments: [],
+    date: new Date('2026-01-02T09:00:00'),
+    tags: ['finance'],
+    thread_id: null,
+    category: 'finance',
+    priority: 'low',
+    entities: { persons: [], dates: [], actions: [] },
+    embedding: null,
+  },
+  {
+    id: 406,
+    folder: 'archive',
+    unread: false,
+    flagged: false,
+    starred: false,
+    from: { name: '李明 (TA)', email: 'liming-ta@university.edu', color: '#107c10' },
+    to: ['you@mailmind.app'],
+    subject: 'MailMind 项目初期反馈 — 第一次评审',
+    preview: '同学，你提交的第一版线框图我看了，整体思路是对的，但还需要在信息架构上做一些调整……',
+    body: [
+      { type: 'text', content: '同学，' },
+      { type: 'text', content: '你提交的第一版 MailMind 线框图我看了。整体思路是对的，三栏布局符合用户心智模型，主要问题在信息架构上：\n\n1. 搜索入口太隐蔽，建议放到顶部居中位置（参考 Gmail 的处理方式）。\n2. 邮件列表的时间显示格式不一致，建议统一到"相对时间"（今天/昨天/日期）。\n3. 阅读窗格缺少"回复"的快速入口。' },
+      { type: 'text', content: '这些是第一版的核心问题，修改后可以进入第二轮设计迭代。继续加油！' },
+    ],
+    signature: '李明\nCS 课程助教',
+    attachments: [
+      { name: 'wireframe_review_v1.pdf', size: '620 KB', type: 'pdf' },
+    ],
+    date: new Date('2026-02-10T16:45:00'),
+    tags: ['work'],
+    thread_id: 'thread_ta_feedback',
+    category: 'work',
+    priority: 'normal',
+    entities: { persons: ['李明'], dates: [], actions: [] },
+    embedding: null,
+  },
+
+  /* ── 已删除 ── */
+  {
+    id: 501,
+    folder: 'deleted',
+    unread: false,
+    flagged: false,
+    starred: false,
+    from: { name: 'Groupon', email: 'deals@groupon.com', color: '#8a8886' },
+    to: ['you@mailmind.app'],
+    subject: 'Deals near you — Up to 70% off this weekend only',
+    preview: 'Restaurants, spas, activities and more. See what\'s on sale near your location this weekend.',
+    body: [
+      { type: 'text', content: 'Weekend deals near you!' },
+      { type: 'text', content: 'Up to 70% off selected local businesses this weekend only.\n• Restaurants & cafes\n• Spa & wellness\n• Entertainment & activities' },
+    ],
+    signature: 'Groupon\nUnsubscribe',
+    attachments: [],
+    date: new Date('2026-03-01T05:00:00'),
+    tags: [],
+    thread_id: null,
+    category: 'notification',
+    priority: 'low',
+    entities: { persons: [], dates: [], actions: [] },
+    embedding: null,
+  },
+  {
+    id: 502,
+    folder: 'deleted',
+    unread: false,
+    flagged: false,
+    starred: false,
+    from: { name: 'Google Alerts', email: 'googlealerts-noreply@google.com', color: '#4285f4' },
+    to: ['you@mailmind.app'],
+    subject: 'Google Alert — "email client AI"',
+    preview: 'New results for "email client AI": 3 new articles this week including HN discussion on AI-native email tools.',
+    body: [
+      { type: 'text', content: 'New Google Alert results for: email client AI' },
+      { type: 'text', content: '3 new articles this week:\n1. "The rise of AI-native email clients" — TechCrunch\n2. HN discussion: Ask HN: What would a truly AI-native email client look like?\n3. "Superhuman vs Spark vs Hey: Which AI email tool is best in 2026?" — The Verge' },
+    ],
+    signature: 'Google Alerts\nmanage alerts | unsubscribe',
+    attachments: [],
+    date: new Date('2026-03-02T07:00:00'),
+    tags: ['info'],
+    thread_id: null,
+    category: 'notification',
+    priority: 'low',
+    entities: { persons: [], dates: [], actions: [] },
+    embedding: null,
+  },
+  {
+    id: 503,
+    folder: 'deleted',
+    unread: true,
+    flagged: false,
+    starred: false,
+    from: { name: '（草稿）', email: 'you@mailmind.app', color: '#8a8886' },
+    to: ['wangfang@lab.edu'],
+    subject: '开题报告初稿 — 请指导',
+    preview: '王老师，您好，附上我的毕业论文开题报告初稿，请您在百忙之中给予指导意见……',
+    body: [
+      { type: 'text', content: '王老师，您好，' },
+      { type: 'text', content: '附上我的毕业论文开题报告初稿，请您在百忙之中给予指导意见。' },
+      { type: 'text', content: '（此版本已废弃，见 v2 版本）' },
+    ],
+    signature: '',
+    attachments: [
+      { name: 'thesis_proposal_v1_DRAFT.pdf', size: '310 KB', type: 'pdf' },
+    ],
+    date: new Date('2026-03-05T23:00:00'),
+    tags: ['work'],
+    thread_id: 'thread_thesis',
+    category: 'work',
+    priority: 'low',
+    entities: { persons: ['Prof. Wang Fang'], dates: [], actions: [] },
+    embedding: null,
+  },
+];
+
+/* ──────────────────────────────────────────────────────────────
+   SECTION 1b: SUPPLEMENTARY DATA
+   threadData / personData / taskData 作为独立的内存"表"
+   支持 AI 功能（搜索、任务提取、联系人管理）的数据基础
+   ────────────────────────────────────────────────────────────── */
+
+const threadData = [
+  {
+    thread_id:    'thread_project_deadline',
+    subject:      '课程 Project 第一阶段截止日期',
+    mail_ids:     [1, 101, 401],
+    participants: ['you@mailmind.app', 'zhangwei@university.edu'],
+    last_date:    new Date('2026-03-06T10:05:00'),
+  },
+  {
+    thread_id:    'thread_pr_review',
+    subject:      'PR #3 — feat: add email search with fuzzy matching',
+    mail_ids:     [2, 5, 22, 102, 204],
+    participants: ['you@mailmind.app', 'alice-dev@example.com'],
+    last_date:    new Date('2026-03-06T17:00:00'),
+  },
+  {
+    thread_id:    'thread_ta_feedback',
+    subject:      'MailMind 项目反馈',
+    mail_ids:     [3, 201, 406],
+    participants: ['you@mailmind.app', 'liming-ta@university.edu'],
+    last_date:    new Date('2026-03-05T17:32:00'),
+  },
+  {
+    thread_id:    'thread_design_review',
+    subject:      'Design review — MailMind mockups',
+    mail_ids:     [18, 203],
+    participants: ['you@mailmind.app', 'alex.r@agency.co'],
+    last_date:    new Date('2026-03-04T16:00:00'),
+  },
+  {
+    thread_id:    'thread_coffee_sarah',
+    subject:      'Coffee chat this Friday?',
+    mail_ids:     [9, 103],
+    participants: ['you@mailmind.app', 'sarah.chen@startup.io'],
+    last_date:    new Date('2026-03-06T11:20:00'),
+  },
+  {
+    thread_id:    'thread_family_dinner',
+    subject:      '周末回家吃饭',
+    mail_ids:     [14, 202],
+    participants: ['you@mailmind.app', 'mom@family.com'],
+    last_date:    new Date('2026-03-03T20:15:00'),
+  },
+  {
+    thread_id:    'thread_job_interview',
+    subject:      '面试邀请 — 前端工程师 @ TechCorp',
+    mail_ids:     [20, 104, 206],
+    participants: ['you@mailmind.app', 'recruiting@techcorp.com'],
+    last_date:    new Date('2026-03-06T18:00:00'),
+  },
+  {
+    thread_id:    'thread_thesis',
+    subject:      '毕业论文开题报告',
+    mail_ids:     [24, 105, 503],
+    participants: ['you@mailmind.app', 'wangfang@lab.edu'],
+    last_date:    new Date('2026-03-07T09:00:00'),
+  },
+  {
+    thread_id:    'thread_group_meeting',
+    subject:      '组会分享',
+    mail_ids:     [26, 205],
+    participants: ['you@mailmind.app', 'david.li@university.edu', 'alice-dev@example.com', 'sarah.chen@startup.io'],
+    last_date:    new Date('2026-03-06T14:00:00'),
+  },
+  {
+    thread_id:    'thread_sprint_planning',
+    subject:      'MailMind Sprint Planning',
+    mail_ids:     [19],
+    participants: ['you@mailmind.app', 'alice-dev@example.com'],
+    last_date:    new Date('2026-03-06T12:00:00'),
+  },
+];
+
+const personData = [
+  {
+    person_id: 'zhang-wei',
+    name:      'Prof. Zhang Wei',
+    email:     'zhangwei@university.edu',
+    color:     '#0078d4',
+    mail_ids:  [1, 401],
+    relation:  'professor',
+  },
+  {
+    person_id: 'li-ming',
+    name:      '李明 (TA)',
+    email:     'liming-ta@university.edu',
+    color:     '#107c10',
+    mail_ids:  [3, 201, 406],
+    relation:  'colleague',
+  },
+  {
+    person_id: 'sarah-chen',
+    name:      'Sarah Chen',
+    email:     'sarah.chen@startup.io',
+    color:     '#6f42c1',
+    mail_ids:  [9, 26, 103],
+    relation:  'personal',
+  },
+  {
+    person_id: 'alex-rivera',
+    name:      'Alex Rivera',
+    email:     'alex.r@agency.co',
+    color:     '#00b4d8',
+    mail_ids:  [18, 203],
+    relation:  'colleague',
+  },
+  {
+    person_id: 'alice-dev',
+    name:      'Alice Dev',
+    email:     'alice-dev@example.com',
+    color:     '#6f42c1',
+    mail_ids:  [2, 5, 6, 22, 26, 102, 204],
+    relation:  'colleague',
+  },
+  {
+    person_id: 'mom',
+    name:      'Mom',
+    email:     'mom@family.com',
+    color:     '#e91e63',
+    mail_ids:  [14, 202],
+    relation:  'family',
+  },
+  {
+    person_id: 'david-li',
+    name:      'David Li',
+    email:     'david.li@university.edu',
+    color:     '#00b4d8',
+    mail_ids:  [23, 26, 205],
+    relation:  'colleague',
+  },
+  {
+    person_id: 'wang-fang',
+    name:      'Prof. Wang Fang',
+    email:     'wangfang@lab.edu',
+    color:     '#5c2d91',
+    mail_ids:  [24, 105, 503],
+    relation:  'professor',
+  },
+  {
+    person_id: 'lisa-wang',
+    name:      'Lisa Wang (TechCorp HR)',
+    email:     'recruiting@techcorp.com',
+    color:     '#0d6efd',
+    mail_ids:  [20, 104, 206],
+    relation:  'colleague',
+  },
+];
+
+const taskData = [
+  {
+    task_id:  'task_01',
+    email_id: 1,
+    content:  '完成课程 Demo 原型基础功能（静态界面、Mock 数据、核心交互）',
+    due:      '2026-03-08',
+    status:   'pending',
+    source:   'ai_extracted',
+  },
+  {
+    task_id:  'task_02',
+    email_id: 1,
+    content:  '周三 Office Hours 前去找 Prof. Zhang Wei 汇报进展',
+    due:      '2026-03-11',
+    status:   'pending',
+    source:   'ai_extracted',
+  },
+  {
+    task_id:  'task_03',
+    email_id: 7,
+    content:  '在3月25日前还款信用卡账单 ¥1,234.56',
+    due:      '2026-03-25',
+    status:   'pending',
+    source:   'ai_extracted',
+  },
+  {
+    task_id:  'task_04',
+    email_id: 11,
+    content:  '3月15日前完成年度福利填写并提交',
+    due:      '2026-03-15',
+    status:   'pending',
+    source:   'ai_extracted',
+  },
+  {
+    task_id:  'task_05',
+    email_id: 13,
+    content:  '检查 AWS EC2 用量并设置 billing alerts，避免超出免费额度',
+    due:      null,
+    status:   'pending',
+    source:   'ai_extracted',
+  },
+  {
+    task_id:  'task_06',
+    email_id: 3,
+    content:  '回复 TA 李明的设计反馈并实施优化建议',
+    due:      null,
+    status:   'pending',
+    source:   'ai_extracted',
+  },
+  {
+    task_id:  'task_07',
+    email_id: 19,
+    content:  '在3月8日前 RSVP Sprint Planning 会议（3月9日 10:00）',
+    due:      '2026-03-08',
+    status:   'pending',
+    source:   'ai_extracted',
+  },
+  {
+    task_id:  'task_08',
+    email_id: 20,
+    content:  '3月10日前回复 TechCorp 确认面试（3月12日14:00）',
+    due:      '2026-03-10',
+    status:   'done',
+    source:   'ai_extracted',
+  },
+  {
+    task_id:  'task_09',
+    email_id: 23,
+    content:  '24小时内登录支付宝确认 David Li 的 ¥2,450 转账',
+    due:      '2026-03-07',
+    status:   'pending',
+    source:   'ai_extracted',
+  },
+  {
+    task_id:  'task_10',
+    email_id: 24,
+    content:  '3月13日下午5点前将修改后的开题报告发给 Prof. Wang Fang',
+    due:      '2026-03-13',
+    status:   'pending',
+    source:   'ai_extracted',
+  },
+  {
+    task_id:  'task_11',
+    email_id: 24,
+    content:  '周四下午2点后去实验室找 Prof. Wang Fang 讨论论文',
+    due:      '2026-03-12',
+    status:   'pending',
+    source:   'ai_extracted',
+  },
+  {
+    task_id:  'task_12',
+    email_id: 26,
+    content:  '准备组会分享（MailMind AI 搜索，约20分钟，3月12日 15:00）',
+    due:      '2026-03-12',
+    status:   'pending',
+    source:   'ai_extracted',
   },
 ];
 
@@ -639,6 +1581,8 @@ const state = {
   selectedMailId: null,         // 当前选中的邮件 ID
   searchQuery:    '',           // 搜索关键词
   activeTab:      'all',        // 邮件列表 Tab：'all' | 'unread' | 'flagged'
+  aiMode:         false,        // true = 当前展示 AI 语义搜索结果
+  aiResults:      [],           // [{ mail, score }, ...] AI 搜索结果集
 };
 
 /* ──────────────────────────────────────────────────────────────
@@ -715,6 +1659,11 @@ function highlightText(container, query) {
  * 这是搜索和筛选功能未来的统一入口
  */
 function getFilteredMails() {
+  // AI 搜索模式：直接返回预计算的全局结果集，跳过文件夹/tab 过滤
+  if (state.aiMode && state.aiResults.length) {
+    return state.aiResults.map(r => r.mail);
+  }
+
   // "已加星标"是跨文件夹的虚拟视图，按 starred 属性筛选；其余按 folder 字段筛选
   let mails = state.activeFolder === 'starred'
     ? mailData.filter(m => m.starred)
@@ -742,6 +1691,17 @@ function getFilteredMails() {
 
 function getMailItemMarkup(mail) {
   const hasIcons = mail.starred || mail.attachments.length > 0;
+
+  // AI 模式：从 aiResults 中查找该邮件的相关度分数
+  let scoreHtml = '';
+  if (state.aiMode) {
+    const result = state.aiResults.find(r => r.mail.id === mail.id);
+    if (result) {
+      const pct = Math.round(result.score * 100);
+      scoreHtml = `<span class="relevance-badge">${pct}%</span>`;
+    }
+  }
+
   return `
       <div class="mail-item-top">
         <span class="mail-sender">${escapeHtml(mail.from.name)}</span>
@@ -752,7 +1712,7 @@ function getMailItemMarkup(mail) {
               ${mail.attachments.length ? `<svg class="mail-attach-icon" width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M10 5L6 9a2.8 2.8 0 01-4-4l4.5-4.5a1.8 1.8 0 012.5 2.5L4.5 8.5a.8.8 0 01-1.1-1.1l4-4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>` : ''}
             </div>
           ` : ''}
-          <span class="mail-time">${formatDate(mail.date)}</span>
+          ${scoreHtml || `<span class="mail-time">${formatDate(mail.date)}</span>`}
         </div>
       </div>
       <div class="mail-subject">${escapeHtml(mail.subject)}</div>
@@ -794,6 +1754,19 @@ function renderMailList() {
 
   listEl.innerHTML = '';
 
+  // AI 模式时，在列表顶部插入结果说明横幅
+  if (state.aiMode) {
+    const header = document.createElement('li');
+    header.className = 'mail-list-ai-header';
+    header.innerHTML = `
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+      </svg>
+      AI 语义搜索 · ${mails.length} 条结果，跨所有文件夹
+    `;
+    listEl.appendChild(header);
+  }
+
   if (mails.length === 0) {
     emptyEl.style.display = 'flex';
     return;
@@ -815,8 +1788,8 @@ function renderMailList() {
     listEl.appendChild(li);
   });
 
-  // 高亮搜索词
-  if (state.searchQuery.trim()) {
+  // 普通模式高亮搜索词；AI 模式不做文字高亮（避免与相关度徽章冲突）
+  if (!state.aiMode && state.searchQuery.trim()) {
     highlightText(listEl, state.searchQuery.trim());
   }
 }
@@ -1005,13 +1978,92 @@ function toggleStar(mail) {
    SECTION 9: SEARCH
    ────────────────────────────────────────────────────────────── */
 
-function handleSearch(query) {
-  state.searchQuery    = query;
-  state.selectedMailId = null;
+/**
+ * 更新搜索框下方的 AI 状态提示
+ * @param {'idle'|'building'|'searching'|'done'|'error'|'ready'|'no-key'} status
+ * @param {number} [count] 结果数量或已完成数量
+ * @param {number} [total] 总数量（构建索引时使用）
+ */
+function setSearchStatus(status, count, total) {
+  const el     = document.getElementById('searchAiStatus');
+  const textEl = document.getElementById('searchAiStatusText');
+  if (!el || !textEl) return;
 
+  switch (status) {
+    case 'idle':
+      el.style.display = 'none';
+      break;
+    case 'building':
+      el.style.display = 'flex';
+      el.dataset.status = 'loading';
+      textEl.textContent = count
+        ? `正在构建 AI 索引… ${count}/${total}`
+        : '正在构建 AI 索引…';
+      break;
+    case 'searching':
+      el.style.display = 'flex';
+      el.dataset.status = 'loading';
+      textEl.textContent = 'AI 语义搜索中…';
+      break;
+    case 'done':
+      el.style.display = 'flex';
+      el.dataset.status = 'done';
+      textEl.textContent = `找到 ${count} 条相关邮件`;
+      break;
+    case 'ready':
+      el.style.display = 'none';
+      break;
+    case 'error':
+      el.style.display = 'flex';
+      el.dataset.status = 'error';
+      textEl.textContent = '⚠ AI 不可用，已降级到关键词搜索';
+      break;
+    case 'no-key':
+      el.style.display = 'none';
+      break;
+  }
+}
+
+async function handleSearch(query) {
   const clearBtn = document.getElementById('searchClear');
   clearBtn.style.display = query ? 'flex' : 'none';
 
+  // 无输入：退出 AI 模式，恢复当前文件夹视图
+  if (!query.trim()) {
+    state.aiMode    = false;
+    state.aiResults = [];
+    state.searchQuery = '';
+    setSearchStatus('idle');
+    renderMailList();
+    renderReadingPane(null);
+    return;
+  }
+
+  state.searchQuery    = query;
+  state.selectedMailId = null;
+
+  // 如果 AI 索引已就绪，走语义搜索
+  if (typeof indexReady !== 'undefined' && indexReady) {
+    setSearchStatus('searching');
+    try {
+      const results = await semanticSearch(query);
+      state.aiMode    = true;
+      state.aiResults = results;
+      setSearchStatus('done', results.length);
+      renderMailList();
+      renderReadingPane(null);
+      return;
+    } catch (e) {
+      console.warn('[MailMind AI] 搜索失败，降级到关键词搜索:', e.message);
+      setSearchStatus('error');
+      state.aiMode    = false;
+      state.aiResults = [];
+    }
+  }
+
+  // 降级：关键词搜索（AI 未就绪或发生错误时）
+  state.aiMode    = false;
+  state.aiResults = [];
   renderMailList();
   renderReadingPane(null);
 }
@@ -1040,11 +2092,11 @@ function init() {
     document.getElementById('sidebar').classList.toggle('collapsed');
   });
 
-  /* Search input (debounced) */
+  /* Search input (debounced at 600ms to minimize AI API calls) */
   let searchTimer;
   document.getElementById('searchInput').addEventListener('input', e => {
     clearTimeout(searchTimer);
-    searchTimer = setTimeout(() => handleSearch(e.target.value), 200);
+    searchTimer = setTimeout(() => handleSearch(e.target.value), 600);
   });
 
   /* Clear search */
@@ -1077,7 +2129,7 @@ function init() {
     alert('新建邮件（功能占位 — 可在后续版本中扩展）');
   });
 
-  /* Keyboard: press Escape to clear search */
+  /* Keyboard: press Escape to clear search and exit AI mode */
   document.addEventListener('keydown', e => {
     if (e.key === 'Escape' && state.searchQuery) {
       document.getElementById('searchInput').value = '';
@@ -1093,6 +2145,11 @@ function init() {
   /* Auto-select first mail in inbox for better first impression */
   const firstMail = getFilteredMails()[0];
   if (firstMail) selectMail(firstMail.id);
+
+  /* Build AI vector index asynchronously (non-blocking) */
+  if (typeof buildVectorIndex === 'function') {
+    buildVectorIndex();
+  }
 }
 
 /* Run on DOM ready */

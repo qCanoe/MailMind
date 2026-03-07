@@ -860,6 +860,100 @@ h1, h2, h3, h4, h5, h6 { font-family: var(--font-heading); }
 }
 
 /* ============================================================
+   AI SEARCH — status bar, relevance badge, list header
+   ============================================================ */
+
+/* 搜索框下方的 AI 状态提示条 */
+.topbar-search {
+  position: relative;
+}
+
+.search-ai-status {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 12px;
+  background: rgba(20, 20, 30, 0.88);
+  backdrop-filter: blur(12px);
+  border-radius: 10px;
+  font-size: 11.5px;
+  color: rgba(255, 255, 255, 0.85);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+  z-index: 200;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+.search-ai-status[data-status='done'] {
+  background: rgba(16, 124, 16, 0.85);
+}
+
+.search-ai-status[data-status='error'] {
+  background: rgba(164, 38, 44, 0.85);
+}
+
+/* 脉冲加载圆点 */
+.search-ai-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.9);
+  flex-shrink: 0;
+  animation: aiDotPulse 1.2s ease-in-out infinite;
+}
+
+.search-ai-status[data-status='done'] .search-ai-dot,
+.search-ai-status[data-status='error'] .search-ai-dot {
+  animation: none;
+}
+
+@keyframes aiDotPulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%       { opacity: 0.4; transform: scale(0.7); }
+}
+
+/* AI 模式下邮件列表顶部横幅 */
+.mail-list-ai-header {
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 16px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--ms-blue);
+  background: color-mix(in srgb, var(--ms-blue) 8%, transparent);
+  border-bottom: 1px solid color-mix(in srgb, var(--ms-blue) 15%, transparent);
+  user-select: none;
+}
+
+.mail-list-ai-header svg {
+  flex-shrink: 0;
+  opacity: 0.7;
+}
+
+/* 相关度百分比徽章（替换 AI 模式下的时间显示） */
+.relevance-badge {
+  display: inline-flex;
+  align-items: center;
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  padding: 1px 6px;
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--ms-blue) 12%, transparent);
+  color: var(--ms-blue);
+  border: 1px solid color-mix(in srgb, var(--ms-blue) 25%, transparent);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* ============================================================
    RESPONSIVE — narrow viewport
    ============================================================ */
 @media (max-width: 960px) {
