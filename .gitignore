@@ -11,3 +11,9 @@ Thumbs.db
 # Logs
 *.log
 npm-debug.log*
+
+# AI Search — API Key (do not commit)
+scripts/config.js
+
+# AI Search — Pre-generated embeddings (run: node scripts/generate-embeddings.js)
+scripts/embeddings.js
