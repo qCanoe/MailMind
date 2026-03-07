@@ -923,19 +923,13 @@ function renderReadingPane(mail) {
    ────────────────────────────────────────────────────────────── */
 
 function renderBadges() {
-  const folders = ['inbox', 'drafts', 'starred'];
+  const folders = ['inbox', 'drafts'];
   folders.forEach(f => {
     const badgeEl = document.getElementById(`badge-${f}`);
     if (!badgeEl) return;
     const count = mailData.filter(m => m.folder === f && m.unread).length;
-    if (f === 'starred') {
-      const starredCount = mailData.filter(m => m.starred).length;
-      badgeEl.textContent = starredCount;
-      badgeEl.style.display = starredCount ? 'flex' : 'none';
-    } else {
-      badgeEl.textContent = count;
-      badgeEl.style.display = count ? 'flex' : 'none';
-    }
+    badgeEl.textContent = count;
+    badgeEl.style.display = count ? 'flex' : 'none';
   });
 }
 
