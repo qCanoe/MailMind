@@ -42,7 +42,8 @@ No backend is required; API calls are made directly from the browser.
 ├── README.md
 ├── scripts/
 │   ├── config.js          # API key (add to .gitignore)
-│   ├── app.js              # Main app logic
+│   ├── mail-data.js       # Mock mail data
+│   ├── app.js             # Main app logic
 │   ├── ai-search.js        # LLM + vector search
 │   └── generate-embeddings.js
 ├── styles/

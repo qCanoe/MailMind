@@ -1,7 +1,7 @@
 /* ============================================================
    MailMind — AI Search Module
    ai-search.js: 语义搜索 + LLM 理解搜索核心模块
-   依赖：config.js（需先引入）、app.js 中的 mailData
+   依赖：config.js、mail-data.js（需先引入）、app.js
    ============================================================ */
 
 'use strict';

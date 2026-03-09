@@ -17,3 +17,5 @@ scripts/config.js
 
 # AI Search — Pre-generated embeddings (run: node scripts/generate-embeddings.js)
 scripts/embeddings.js
+
+mvp.md

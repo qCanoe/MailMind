@@ -39,16 +39,15 @@ if (!OPENAI_API_KEY || OPENAI_API_KEY.startsWith('sk-your')) {
   process.exit(1);
 }
 
-/* ── 从 app.js 提取 mailData ──
-   通过 VM 沙箱执行 app.js 中 mailData 的定义部分，避免依赖 DOM。 */
+/* ── 从 mail-data.js 加载 mailData ── */
 const vm   = require('vm');
-const appPath = path.join(__dirname, 'app.js');
-const appSrc  = fs.readFileSync(appPath, 'utf8');
+const dataPath = path.join(__dirname, 'mail-data.js');
+const dataSrc  = fs.readFileSync(dataPath, 'utf8');
 
-/* 提取 mailData 数组（截到 ]; 结束） */
-const mailDataMatch = appSrc.match(/const mailData\s*=\s*(\[[\s\S]*?\n\];)/);
+/* 提取 mailData 数组 */
+const mailDataMatch = dataSrc.match(/const mailData\s*=\s*(\[[\s\S]*?\n\];)/);
 if (!mailDataMatch) {
-  console.error('❌ 无法从 app.js 中提取 mailData，请检查文件格式。');
+  console.error('❌ 无法从 mail-data.js 中提取 mailData，请检查文件格式。');
   process.exit(1);
 }
 
