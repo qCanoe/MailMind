@@ -1582,7 +1582,9 @@ const state = {
   searchQuery:    '',           // 搜索关键词
   activeTab:      'all',        // 邮件列表 Tab：'all' | 'unread' | 'flagged'
   aiMode:         false,        // true = 当前展示 AI 语义搜索结果
-  aiResults:      [],           // [{ mail, score }, ...] AI 搜索结果集
+  aiResults:      [],           // [{ mail, score|reason }, ...] AI 搜索结果集
+  aiAnswer:       '',           // LLM 对用户查询的直接自然语言回答
+  aiSearchType:   'none',       // 'none' | 'llm' | 'vector' | 'keyword'
 };
 
 /* ──────────────────────────────────────────────────────────────
@@ -1692,13 +1694,26 @@ function getFilteredMails() {
 function getMailItemMarkup(mail) {
   const hasIcons = mail.starred || mail.attachments.length > 0;
 
-  // AI 模式：从 aiResults 中查找该邮件的相关度分数
-  let scoreHtml = '';
+  // AI 模式：显示 LLM 推理说明 或 向量相似度百分比
+  let aiHintHtml = '';
   if (state.aiMode) {
     const result = state.aiResults.find(r => r.mail.id === mail.id);
     if (result) {
-      const pct = Math.round(result.score * 100);
-      scoreHtml = `<span class="relevance-badge">${pct}%</span>`;
+      if (state.aiSearchType === 'llm' && result.reason) {
+        aiHintHtml = '';
+      } else if (result.score !== undefined) {
+        const pct = Math.round(result.score * 100);
+        aiHintHtml = `<span class="relevance-badge">${pct}%</span>`;
+      }
+    }
+  }
+
+  // LLM 模式：在 preview 下方显示推理说明
+  let reasonHtml = '';
+  if (state.aiMode && state.aiSearchType === 'llm') {
+    const result = state.aiResults.find(r => r.mail.id === mail.id);
+    if (result && result.reason) {
+      reasonHtml = `<div class="mail-ai-reason">${escapeHtml(result.reason)}</div>`;
     }
   }
 
@@ -1712,11 +1727,12 @@ function getMailItemMarkup(mail) {
               ${mail.attachments.length ? `<svg class="mail-attach-icon" width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M10 5L6 9a2.8 2.8 0 01-4-4l4.5-4.5a1.8 1.8 0 012.5 2.5L4.5 8.5a.8.8 0 01-1.1-1.1l4-4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>` : ''}
             </div>
           ` : ''}
-          ${scoreHtml || `<span class="mail-time">${formatDate(mail.date)}</span>`}
+          ${aiHintHtml || `<span class="mail-time">${formatDate(mail.date)}</span>`}
         </div>
       </div>
       <div class="mail-subject">${escapeHtml(mail.subject)}</div>
       <div class="mail-preview">${escapeHtml(mail.preview)}</div>
+      ${reasonHtml}
     `;
 }
 
@@ -1756,13 +1772,18 @@ function renderMailList() {
 
   // AI 模式时，在列表顶部插入结果说明横幅
   if (state.aiMode) {
+    const modeLabel = state.aiSearchType === 'llm'
+      ? 'AI 理解搜索'
+      : state.aiSearchType === 'vector'
+      ? 'AI 语义搜索'
+      : '关键词搜索';
     const header = document.createElement('li');
     header.className = 'mail-list-ai-header';
     header.innerHTML = `
       <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
       </svg>
-      AI 语义搜索 · ${mails.length} 条结果，跨所有文件夹
+      ${modeLabel} · ${mails.length} 条结果，跨所有文件夹
     `;
     listEl.appendChild(header);
   }
@@ -2030,10 +2051,13 @@ async function handleSearch(query) {
 
   // 无输入：退出 AI 模式，恢复当前文件夹视图
   if (!query.trim()) {
-    state.aiMode    = false;
-    state.aiResults = [];
-    state.searchQuery = '';
+    state.aiMode      = false;
+    state.aiResults   = [];
+    state.aiAnswer    = '';
+    state.aiSearchType = 'none';
+    state.searchQuery  = '';
     setSearchStatus('idle');
+    renderAiAnswer(null);
     renderMailList();
     renderReadingPane(null);
     return;
@@ -2042,30 +2066,78 @@ async function handleSearch(query) {
   state.searchQuery    = query;
   state.selectedMailId = null;
 
-  // 如果 AI 索引已就绪，走语义搜索
-  if (typeof indexReady !== 'undefined' && indexReady) {
+  // ── 优先路径：LLM 理解搜索（真正让 AI 读懂邮件）──
+  const aiToggleEl = document.getElementById('aiToggle');
+  const aiEnabled  = !aiToggleEl || aiToggleEl.checked;
+
+  if (aiEnabled && typeof llmSearch === 'function' &&
+      typeof OPENAI_API_KEY !== 'undefined' &&
+      OPENAI_API_KEY && !OPENAI_API_KEY.startsWith('sk-your')) {
     setSearchStatus('searching');
     try {
-      const results = await semanticSearch(query);
-      state.aiMode    = true;
-      state.aiResults = results;
+      const { answer, results } = await llmSearch(query);
+      state.aiMode       = true;
+      state.aiResults    = results;
+      state.aiAnswer     = answer;
+      state.aiSearchType = 'llm';
       setSearchStatus('done', results.length);
+      renderAiAnswer({ answer, query, count: results.length });
       renderMailList();
       renderReadingPane(null);
       return;
     } catch (e) {
-      console.warn('[MailMind AI] 搜索失败，降级到关键词搜索:', e.message);
-      setSearchStatus('error');
-      state.aiMode    = false;
-      state.aiResults = [];
+      console.warn('[MailMind AI] LLM 搜索失败，尝试向量搜索:', e.message);
     }
   }
 
-  // 降级：关键词搜索（AI 未就绪或发生错误时）
-  state.aiMode    = false;
-  state.aiResults = [];
+  // ── 次选路径：向量语义搜索 ──
+  if (aiEnabled && typeof indexReady !== 'undefined' && indexReady) {
+    setSearchStatus('searching');
+    try {
+      const results = await semanticSearch(query);
+      state.aiMode       = true;
+      state.aiResults    = results;
+      state.aiAnswer     = '';
+      state.aiSearchType = 'vector';
+      setSearchStatus('done', results.length);
+      renderAiAnswer(null);
+      renderMailList();
+      renderReadingPane(null);
+      return;
+    } catch (e) {
+      console.warn('[MailMind AI] 向量搜索失败，降级到关键词搜索:', e.message);
+      setSearchStatus('error');
+    }
+  }
+
+  // ── 兜底：关键词搜索 ──
+  state.aiMode       = false;
+  state.aiResults    = [];
+  state.aiAnswer     = '';
+  state.aiSearchType = 'keyword';
+  renderAiAnswer(null);
   renderMailList();
   renderReadingPane(null);
+}
+
+/**
+ * 渲染 AI 答案面板（LLM 搜索时显示在邮件列表上方）
+ * @param {{ answer: string, query: string, count: number } | null} data
+ */
+function renderAiAnswer(data) {
+  const panel = document.getElementById('aiAnswerPanel');
+  if (!panel) return;
+
+  if (!data || !data.answer) {
+    panel.style.display = 'none';
+    return;
+  }
+
+  panel.style.display = 'block';
+  const answerTextEl = document.getElementById('aiAnswerText');
+  const answerMetaEl = document.getElementById('aiAnswerMeta');
+  if (answerTextEl) answerTextEl.textContent = data.answer;
+  if (answerMetaEl) answerMetaEl.textContent = `找到 ${data.count} 封相关邮件`;
 }
 
 /* ──────────────────────────────────────────────────────────────
@@ -2128,6 +2200,15 @@ function init() {
   document.getElementById('composeBtn').addEventListener('click', () => {
     alert('新建邮件（功能占位 — 可在后续版本中扩展）');
   });
+
+  /* AI 开关：切换时立即重新触发搜索 */
+  const aiToggle = document.getElementById('aiToggle');
+  if (aiToggle) {
+    aiToggle.addEventListener('change', () => {
+      const q = document.getElementById('searchInput').value;
+      if (q.trim()) handleSearch(q);
+    });
+  }
 
   /* Keyboard: press Escape to clear search and exit AI mode */
   document.addEventListener('keydown', e => {

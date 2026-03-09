@@ -147,7 +147,7 @@ h1, h2, h3, h4, h5, h6 { font-family: var(--font-heading); }
 
 .search-icon {
   position: absolute;
-  left: 14px;
+  left: 62px;
   color: rgba(255,255,255,0.8);
   pointer-events: none;
   transition: color 0.2s ease;
@@ -159,7 +159,7 @@ h1, h2, h3, h4, h5, h6 { font-family: var(--font-heading); }
   background: rgba(255,255,255,0.15);
   border: 1px solid rgba(255,255,255,0.1);
   border-radius: 18px;
-  padding: 0 40px 0 42px;
+  padding: 0 40px 0 82px;
   color: #fff;
   font-size: 14px;
   outline: none;
@@ -187,6 +187,81 @@ h1, h2, h3, h4, h5, h6 { font-family: var(--font-heading); }
   transition: all 0.2s ease;
 }
 .search-clear:hover { background: rgba(255,255,255,0.2); color: #fff; transform: scale(1.1); }
+
+/* ── AI 搜索开关 ── */
+.ai-toggle-wrap {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 0 10px 0 14px;
+  border-right: 1px solid rgba(255,255,255,0.2);
+  user-select: none;
+  cursor: pointer;
+}
+
+.ai-toggle {
+  position: relative;
+  display: inline-block;
+  width: 28px;
+  height: 16px;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.ai-toggle input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+  position: absolute;
+}
+
+.ai-toggle-track {
+  position: absolute;
+  inset: 0;
+  border-radius: 8px;
+  background: rgba(255,255,255,0.2);
+  border: 1px solid rgba(255,255,255,0.25);
+  transition: background 0.22s ease, border-color 0.22s ease;
+}
+
+.ai-toggle input:checked + .ai-toggle-track {
+  background: rgba(255,255,255,0.92);
+  border-color: rgba(255,255,255,0.92);
+}
+
+.ai-toggle-thumb {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.6);
+  transition: transform 0.22s ease, background 0.22s ease;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+}
+
+.ai-toggle input:checked + .ai-toggle-track .ai-toggle-thumb {
+  transform: translateX(12px);
+  background: var(--ms-blue);
+}
+
+.ai-toggle-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: rgba(255,255,255,0.85);
+  transition: opacity 0.2s;
+}
+
+.ai-toggle-wrap:has(input:not(:checked)) .ai-toggle-label {
+  opacity: 0.45;
+}
 
 .topbar-right {
   display: flex;
@@ -951,6 +1026,84 @@ h1, h2, h3, h4, h5, h6 { font-family: var(--font-heading); }
   border: 1px solid color-mix(in srgb, var(--ms-blue) 25%, transparent);
   white-space: nowrap;
   flex-shrink: 0;
+}
+
+/* ── AI 理解徽章（LLM 搜索模式，替代百分比） ── */
+.ai-reason-badge {
+  display: inline-flex;
+  align-items: center;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  padding: 1px 6px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #6c3fc5 0%, #0f6cbd 100%);
+  color: #fff;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* ── 每封邮件下方的 AI 推理说明 ── */
+.mail-ai-reason {
+  font-size: 11px;
+  line-height: 1.45;
+  color: #6c3fc5;
+  margin-top: 4px;
+  padding: 5px 8px;
+  background: color-mix(in srgb, #6c3fc5 6%, transparent);
+  border-left: 2px solid color-mix(in srgb, #6c3fc5 40%, transparent);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  font-style: italic;
+}
+
+/* ── AI 答案面板（邮件列表上方，LLM 搜索专属） ── */
+.ai-answer-panel {
+  margin: 12px 12px 0;
+  padding: 12px 14px;
+  border-radius: var(--radius-md);
+  background: linear-gradient(135deg,
+    color-mix(in srgb, #6c3fc5 8%, transparent) 0%,
+    color-mix(in srgb, #0f6cbd 8%, transparent) 100%);
+  border: 1px solid color-mix(in srgb, #6c3fc5 20%, transparent);
+  animation: slideIn 0.2s ease;
+}
+
+.ai-answer-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 7px;
+}
+
+.ai-answer-header svg {
+  color: #6c3fc5;
+  flex-shrink: 0;
+}
+
+.ai-answer-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: #6c3fc5;
+}
+
+.ai-answer-meta {
+  font-size: 10.5px;
+  color: var(--text-muted);
+  margin-left: auto;
+}
+
+.ai-answer-text {
+  font-size: 12.5px;
+  line-height: 1.55;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateY(-6px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
 /* ============================================================
