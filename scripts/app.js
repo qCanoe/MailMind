@@ -102,6 +102,16 @@ const AI_PRIORITY_FOLDERS = new Set(['ai-high', 'ai-medium', 'ai-low']);
 /** folder key → 优先级等级映射 */
 const AI_FOLDER_LEVEL = { 'ai-high': 'high', 'ai-medium': 'medium', 'ai-low': 'low' };
 
+/** 判断是否为智能文件夹（folder key 以 "sf-" 开头） */
+function isSmartFolder(folderKey) {
+  return typeof folderKey === 'string' && folderKey.startsWith('sf-');
+}
+
+/** 从 folder key 提取智能文件夹 ID */
+function smartFolderIdFromKey(folderKey) {
+  return folderKey.replace(/^sf-/, '');
+}
+
 /**
  * 根据当前 state 过滤邮件列表
  * 这是搜索和筛选功能未来的统一入口
@@ -119,6 +129,12 @@ function getFilteredMails() {
     const level = AI_FOLDER_LEVEL[state.activeFolder];
     mails = typeof getMailsByPriority === 'function'
       ? getMailsByPriority(level)
+      : [];
+  } else if (isSmartFolder(state.activeFolder)) {
+    // 智能文件夹：从分类缓存获取
+    const sfId = smartFolderIdFromKey(state.activeFolder);
+    mails = typeof getMailsForSmartFolder === 'function'
+      ? getMailsForSmartFolder(sfId)
       : [];
   } else if (state.activeFolder === 'starred') {
     // "已加星标"是跨文件夹的虚拟视图
@@ -142,8 +158,10 @@ function getFilteredMails() {
     );
   }
 
-  // AI 优先级文件夹已在 getMailsByPriority() 内排序；其余按时间倒序
-  if (!AI_PRIORITY_FOLDERS.has(state.activeFolder)) {
+  // AI 优先级/智能文件夹已在其各自函数内排序；其余按时间倒序
+  const skipSort = AI_PRIORITY_FOLDERS.has(state.activeFolder) ||
+                   isSmartFolder(state.activeFolder);
+  if (!skipSort) {
     mails.sort((a, b) => b.date - a.date);
   }
 
@@ -263,14 +281,36 @@ function renderMailList() {
     listEl.appendChild(header);
   }
 
+  // 智能文件夹：在列表顶部插入说明横幅
+  if (isSmartFolder(state.activeFolder)) {
+    const sfId     = smartFolderIdFromKey(state.activeFolder);
+    const sfConfig = typeof loadSmartFolders === 'function'
+      ? loadSmartFolders().find(f => f.id === sfId)
+      : null;
+    if (sfConfig) {
+      const header = document.createElement('li');
+      header.className = 'mail-list-ai-header mail-list-ai-header--sf';
+      header.innerHTML = `
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z"/>
+          <line x1="7" y1="7" x2="7.01" y2="7"/>
+        </svg>
+        <span><strong>${escapeHtml(sfConfig.name)}</strong> · ${mails.length} 封邮件
+          <span class="ai-header-desc">${escapeHtml(sfConfig.description)}</span>
+        </span>
+      `;
+      listEl.appendChild(header);
+    }
+  }
+
   // AI 优先级文件夹：在列表顶部插入分类说明横幅
   if (AI_PRIORITY_FOLDERS.has(state.activeFolder)) {
     const level = AI_FOLDER_LEVEL[state.activeFolder];
     const levelLabels = { high: 'High Priority', medium: 'Medium Priority', low: 'Low Priority' };
     const levelDescs  = {
-      high:   'Emails with deadlines, action items, or urgent signals detected by AI',
-      medium: 'Work and personal emails that need attention but have no immediate deadline',
-      low:    'Notifications, subscriptions, and automated emails',
+      high:   '需要及时处理 — 含有截止日期、待办行动、面试邀请或已手动标记的邮件',
+      medium: '值得尽快查看 — 工作往来、会议邀请、个人消息等暂无紧迫截止日期的邮件',
+      low:    '无需立即回应 — 订阅通知、快递物流、支付回执及各类自动发送的邮件',
     };
     const header = document.createElement('li');
     header.className = `mail-list-ai-header mail-list-ai-header--priority mail-list-ai-header--${level}`;
@@ -423,9 +463,9 @@ function renderBadges() {
     badgeEl.style.display = count ? 'flex' : 'none';
   });
 
-  // AI 优先级文件夹徽章（显示每类邮件总数）
-  if (typeof getPriorityCounts === 'function') {
-    const counts = getPriorityCounts();
+  // AI 优先级文件夹徽章（显示未读邮件数）
+  if (typeof getPriorityUnreadCounts === 'function') {
+    const counts = getPriorityUnreadCounts();
     [['high', counts.high], ['medium', counts.medium], ['low', counts.low]].forEach(([level, count]) => {
       const badgeEl = document.getElementById(`badge-ai-${level}`);
       if (!badgeEl) return;
@@ -433,6 +473,7 @@ function renderBadges() {
       badgeEl.style.display = count ? 'flex' : 'none';
     });
   }
+
 }
 
 /* ──────────────────────────────────────────────────────────────
@@ -461,15 +502,29 @@ function selectFolder(folderName) {
     'ai-medium': 'Medium Priority',
     'ai-low':    'Low Priority',
   };
-  document.getElementById('folderTitle').textContent = titles[folderName] || folderName;
 
-  // AI 文件夹：在标题区域显示 AI 标记
+  let displayTitle = titles[folderName] || folderName;
+  if (isSmartFolder(folderName)) {
+    const sfId  = smartFolderIdFromKey(folderName);
+    const sfCfg = typeof loadSmartFolders === 'function'
+      ? loadSmartFolders().find(f => f.id === sfId)
+      : null;
+    displayTitle = sfCfg ? sfCfg.name : 'Smart Folder';
+  }
+  document.getElementById('folderTitle').textContent = displayTitle;
+
+  // AI / 智能文件夹：在标题区域显示对应标记
   const titleEl = document.getElementById('folderTitle');
   if (AI_PRIORITY_FOLDERS.has(folderName)) {
     titleEl.classList.add('ai-folder-title');
     titleEl.dataset.level = AI_FOLDER_LEVEL[folderName];
-  } else {
+    titleEl.classList.remove('sf-folder-title');
+  } else if (isSmartFolder(folderName)) {
+    titleEl.classList.add('sf-folder-title');
     titleEl.classList.remove('ai-folder-title');
+    delete titleEl.dataset.level;
+  } else {
+    titleEl.classList.remove('ai-folder-title', 'sf-folder-title');
     delete titleEl.dataset.level;
   }
 
@@ -662,7 +717,191 @@ function renderAiAnswer(data) {
 }
 
 /* ──────────────────────────────────────────────────────────────
-   SECTION 10: EVENT LISTENERS
+   SECTION 10: SMART FOLDER SIDEBAR + MODAL
+   ────────────────────────────────────────────────────────────── */
+
+/**
+ * 渲染智能文件夹侧边栏列表项
+ * 每次创建/删除/更新文件夹后调用，同时在 init() 时调用一次
+ */
+function renderSmartFolderSidebar() {
+  const folderList = document.getElementById('folderList');
+  const emptyHint  = document.getElementById('sfEmptyHint');
+  if (!folderList) return;
+
+  // 移除上次渲染的所有智能文件夹 <li> 项
+  folderList.querySelectorAll('.sf-folder-item').forEach(el => el.remove());
+
+  const folders = typeof loadSmartFolders === 'function' ? loadSmartFolders() : [];
+
+  if (emptyHint) {
+    emptyHint.style.display = folders.length ? 'none' : 'list-item';
+  }
+
+  // 在 sfEmptyHint 前（或 sfSectionLabel 后）插入各文件夹项
+  const insertBefore = emptyHint || null;
+
+  folders.forEach(folder => {
+    const mails       = typeof getMailsForSmartFolder === 'function'
+      ? getMailsForSmartFolder(folder.id) : [];
+    const unreadCount = mails.filter(m => m.unread).length;
+    const folderKey   = `sf-${folder.id}`;
+
+    const li = document.createElement('li');
+    li.className   = 'folder-item sf-folder-item sf-section-item';
+    li.dataset.folder = folderKey;
+    li.innerHTML = `
+      <span class="sf-color-dot" style="background:${escapeHtml(folder.color)}"></span>
+      <span class="folder-label">${escapeHtml(folder.name)}</span>
+      <button class="sf-edit-btn" data-sf-id="${escapeHtml(folder.id)}" title="Edit folder" aria-label="Edit folder">
+        <svg width="12" height="12" viewBox="0 0 16 16" fill="none">
+          <path d="M11.5 2.5l2 2L5 13H3v-2L11.5 2.5z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/>
+        </svg>
+      </button>
+    `;
+
+    if (state.activeFolder === folderKey) li.classList.add('active');
+
+    // 点击导航（排除点击编辑按钮）
+    li.addEventListener('click', e => {
+      if (e.target.closest('.sf-edit-btn')) return;
+      selectFolder(folderKey);
+    });
+
+    // 编辑按钮
+    li.querySelector('.sf-edit-btn').addEventListener('click', e => {
+      e.stopPropagation();
+      openSmartFolderModal('edit', folder);
+    });
+
+    if (insertBefore) {
+      folderList.insertBefore(li, insertBefore);
+    } else {
+      folderList.appendChild(li);
+    }
+  });
+}
+
+/* ── Modal 状态 ── */
+let _sfModalMode    = 'create'; // 'create' | 'edit'
+let _sfEditFolderId = null;     // 编辑模式时的目标 folder.id
+let _sfSelectedColor = '#6264a7';
+
+function openSmartFolderModal(mode = 'create', folder = null) {
+  const modal      = document.getElementById('sfModal');
+  const titleEl    = document.getElementById('sfModalTitle');
+  const nameInput  = document.getElementById('sfName');
+  const descInput  = document.getElementById('sfDescription');
+  const saveBtn    = document.getElementById('sfSaveBtn');
+  const deleteBtn  = document.getElementById('sfDeleteBtn');
+  if (!modal) return;
+
+  _sfModalMode    = mode;
+  _sfEditFolderId = folder ? folder.id : null;
+
+  if (mode === 'edit' && folder) {
+    titleEl.textContent   = 'Edit Smart Folder';
+    nameInput.value       = folder.name;
+    descInput.value       = folder.description;
+    saveBtn.textContent   = 'Save Changes';
+    deleteBtn.style.display = 'inline-flex';
+    _sfSelectedColor = folder.color || '#6264a7';
+  } else {
+    titleEl.textContent   = 'Create Smart Folder';
+    nameInput.value       = '';
+    descInput.value       = '';
+    saveBtn.textContent   = 'Create Folder';
+    deleteBtn.style.display = 'none';
+    _sfSelectedColor = '#6264a7';
+  }
+
+  // 同步颜色选择器
+  document.querySelectorAll('.sf-color-swatch').forEach(btn => {
+    btn.classList.toggle('selected', btn.dataset.color === _sfSelectedColor);
+  });
+
+  modal.hidden = false;
+  requestAnimationFrame(() => modal.classList.add('visible'));
+  nameInput.focus();
+}
+
+function closeSmartFolderModal() {
+  const modal = document.getElementById('sfModal');
+  if (!modal) return;
+  modal.classList.remove('visible');
+  setTimeout(() => { modal.hidden = true; }, 200);
+}
+
+/* ── 保存（创建 or 更新） ── */
+async function handleSaveSmartFolder() {
+  const name  = document.getElementById('sfName')?.value.trim();
+  const desc  = document.getElementById('sfDescription')?.value.trim();
+  const color = _sfSelectedColor;
+
+  if (!name) {
+    document.getElementById('sfName')?.focus();
+    return;
+  }
+
+  const saveBtn = document.getElementById('sfSaveBtn');
+  if (saveBtn) {
+    saveBtn.disabled    = true;
+    saveBtn.textContent = 'AI classifying…';
+  }
+
+  try {
+    if (_sfModalMode === 'edit' && _sfEditFolderId) {
+      // 更新现有文件夹
+      updateSmartFolder(_sfEditFolderId, { name, description: desc, color });
+      // 重新分类（先本地，再尝试 LLM）
+      const folders   = loadSmartFolders();
+      const sfUpdated = folders.find(f => f.id === _sfEditFolderId);
+      if (sfUpdated) await classifyMailsForFolder(sfUpdated);
+    } else {
+      // 创建新文件夹
+      const folder = createSmartFolder({ name, description: desc, color });
+      await classifyMailsForFolder(folder);
+    }
+  } finally {
+    if (saveBtn) {
+      saveBtn.disabled    = false;
+      saveBtn.textContent = _sfModalMode === 'edit' ? 'Save Changes' : 'Create Folder';
+    }
+  }
+
+  closeSmartFolderModal();
+  renderSmartFolderSidebar();
+  renderBadges();
+
+  // 如果当前正在查看被编辑的文件夹，刷新邮件列表
+  if (_sfModalMode === 'edit' && state.activeFolder === `sf-${_sfEditFolderId}`) {
+    renderMailList();
+  }
+}
+
+/* ── 删除确认 ── */
+function handleDeleteSmartFolder() {
+  if (!_sfEditFolderId) return;
+  const folders = loadSmartFolders();
+  const folder  = folders.find(f => f.id === _sfEditFolderId);
+  if (!folder) return;
+
+  if (!confirm(`Delete smart folder "${folder.name}"? This cannot be undone.`)) return;
+
+  deleteSmartFolder(_sfEditFolderId);
+  closeSmartFolderModal();
+
+  // 如果当前正在查看被删除的文件夹，跳回收件箱
+  if (state.activeFolder === `sf-${_sfEditFolderId}`) {
+    selectFolder('inbox');
+  }
+
+  renderSmartFolderSidebar();
+  renderBadges();
+}
+
+/* ──────────────────────────────────────────────────────────────
+   SECTION 11: EVENT LISTENERS
    ────────────────────────────────────────────────────────────── */
 
 function escapeHtml(str) {
@@ -674,15 +913,79 @@ function escapeHtml(str) {
 }
 
 function init() {
-  /* Folder navigation */
+  /* Folder navigation（智能文件夹项已在 renderSmartFolderSidebar 内单独绑定） */
   document.getElementById('folderList').addEventListener('click', e => {
     const item = e.target.closest('.folder-item');
-    if (item && item.dataset.folder) selectFolder(item.dataset.folder);
+    if (item && item.dataset.folder && !item.classList.contains('sf-folder-item')) {
+      selectFolder(item.dataset.folder);
+    }
   });
 
   /* Sidebar toggle */
   document.getElementById('sidebarToggle').addEventListener('click', () => {
     document.getElementById('sidebar').classList.toggle('collapsed');
+  });
+
+  /* Smart Priority 折叠/展开 */
+  const aiSectionLabel = document.getElementById('aiSectionLabel');
+  if (aiSectionLabel) {
+    aiSectionLabel.addEventListener('click', () => {
+      const expanded = aiSectionLabel.getAttribute('aria-expanded') === 'true';
+      aiSectionLabel.setAttribute('aria-expanded', String(!expanded));
+      document.querySelectorAll('.ai-priority-item').forEach(el => {
+        el.classList.toggle('collapsed', expanded);
+      });
+    });
+  }
+
+  /* 智能文件夹区块折叠/展开 */
+  const sfSectionLabel = document.getElementById('sfSectionLabel');
+  if (sfSectionLabel) {
+    sfSectionLabel.addEventListener('click', e => {
+      // 点击 + 按钮不折叠
+      if (e.target.closest('.sf-add-btn')) return;
+      const expanded = sfSectionLabel.getAttribute('aria-expanded') === 'true';
+      sfSectionLabel.setAttribute('aria-expanded', String(!expanded));
+      document.querySelectorAll('.sf-section-item').forEach(el => {
+        el.classList.toggle('collapsed', expanded);
+      });
+    });
+  }
+
+  /* 创建智能文件夹按钮 */
+  const createSfBtn = document.getElementById('createSmartFolderBtn');
+  if (createSfBtn) {
+    createSfBtn.addEventListener('click', e => {
+      e.stopPropagation();
+      openSmartFolderModal('create');
+    });
+  }
+
+  /* Modal — 取消 / 关闭 */
+  document.getElementById('sfCancelBtn')?.addEventListener('click', closeSmartFolderModal);
+  document.getElementById('sfModalClose')?.addEventListener('click', closeSmartFolderModal);
+  document.getElementById('sfModalBackdrop')?.addEventListener('click', closeSmartFolderModal);
+
+  /* Modal — 保存 */
+  document.getElementById('sfSaveBtn')?.addEventListener('click', handleSaveSmartFolder);
+
+  /* Modal — 删除 */
+  document.getElementById('sfDeleteBtn')?.addEventListener('click', handleDeleteSmartFolder);
+
+  /* Modal — 颜色选择器 */
+  document.getElementById('sfColorSwatches')?.addEventListener('click', e => {
+    const swatch = e.target.closest('.sf-color-swatch');
+    if (!swatch) return;
+    _sfSelectedColor = swatch.dataset.color;
+    document.querySelectorAll('.sf-color-swatch').forEach(s => {
+      s.classList.toggle('selected', s === swatch);
+    });
+  });
+
+  /* Modal — Enter 快捷键保存，Escape 关闭 */
+  document.getElementById('sfModal')?.addEventListener('keydown', e => {
+    if (e.key === 'Enter' && e.target.id === 'sfName') handleSaveSmartFolder();
+    if (e.key === 'Escape') closeSmartFolderModal();
   });
 
   /* Search input (debounced at 600ms to minimize AI API calls) */
@@ -740,6 +1043,7 @@ function init() {
   });
 
   /* Initial render */
+  renderSmartFolderSidebar();
   renderBadges();
   renderMailList();
   renderReadingPane(null);
