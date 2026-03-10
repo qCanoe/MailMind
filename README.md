@@ -6,24 +6,25 @@ It is designed as the foundation for a course project focused on improving the e
 ## Overview
 
 This project currently ships as a static HTML/CSS/JavaScript prototype with mock email data.
-The goal of the first version is to recreate a familiar Outlook-style interface while keeping the codebase simple enough to extend with future features such as:
+The goal is to recreate a familiar Outlook-style interface with AI-assisted organization:
 
-- smarter mail organization
-- lightweight search and filtering
-- improved mail triage interactions
-- visual experiments for inbox productivity
+- Smart Priority and Smart Folders for automatic mail triage
+- Semantic and LLM-powered search
+- Improved mail triage interactions
 
 ## Current Features
 
 - Outlook-inspired three-panel layout
-- top navigation bar with search
-- collapsible sidebar with folders
-- mail list with unread, starred, and attachment states
-- reading pane for detailed email content
-- client-side search with keyword highlighting
-- tab filtering for all, unread, and flagged emails
-- starred mail virtual view across folders
-- mock data for inbox, drafts, sent, junk, and archive
+- Top navigation bar with search
+- Collapsible sidebar with folders
+- Mail list with unread, starred, and attachment states
+- Reading pane for detailed email content
+- Tab filtering for all, unread, and flagged emails
+- Starred mail virtual view across folders
+- **Smart Priority** — AI-powered inbox triage (high / medium / low)
+- **Smart Folders** — Create custom folders with name + description; AI classifies emails automatically (LLM or local keyword fallback)
+- **AI Search** — Semantic search with LLM understanding, vector similarity, or keyword fallback
+- Mock data for inbox, drafts, sent, junk, archive, and deleted
 
 ## Tech Stack
 
@@ -31,8 +32,9 @@ The goal of the first version is to recreate a familiar Outlook-style interface 
 - CSS3
 - Vanilla JavaScript
 - Google Fonts (`Outfit` and `Plus Jakarta Sans`)
+- OpenAI API (optional) — for LLM search and smart folder classification
 
-No backend is required for the current version.
+No backend is required. AI features degrade gracefully when no API key is configured.
 
 ## Project Structure
 
@@ -41,7 +43,14 @@ No backend is required for the current version.
 ├── index.html
 ├── README.md
 ├── scripts/
-│   └── app.js
+│   ├── app.js              # Main app logic, state, rendering
+│   ├── config.js           # OpenAI API key (gitignored template)
+│   ├── mail-data.js        # Mock email data
+│   ├── ai-priority.js      # Smart Priority classification engine
+│   ├── ai-search.js        # LLM + vector + keyword search
+│   ├── smart-folders.js    # Smart Folders CRUD + AI classification
+│   ├── embeddings.js       # Pre-generated vectors (optional)
+│   └── generate-embeddings.js  # Node script to build embeddings
 └── styles/
     └── main.css
 ```
@@ -85,16 +94,24 @@ That makes it easier to test ideas around:
 - inbox interaction patterns
 - usability improvements
 
+## Optional: Enable AI Features
+
+Create `scripts/config.js` with your OpenAI API key:
+
+```javascript
+const OPENAI_API_KEY = 'sk-your-key-here';
+```
+
+This enables LLM-based search and smart folder classification. Without it, the app falls back to local keyword matching and vector search (if embeddings are pre-generated).
+
 ## Roadmap
 
 Possible next steps include:
 
-- advanced filtering by sender, date, or tag
-- customizable labels and categories
-- better keyboard navigation
-- bulk triage actions
-- AI-assisted organization concepts
-- usability testing and iteration
+- Advanced filtering by sender, date, or tag
+- Better keyboard navigation
+- Bulk triage actions
+- Usability testing and iteration
 
 ## Status
 
