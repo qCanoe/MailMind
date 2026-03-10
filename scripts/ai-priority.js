@@ -173,7 +173,7 @@ function getMailsByPriority(level) {
 }
 
 /**
- * 获取各优先级邮件数量（用于徽章）
+ * 获取各优先级邮件总数（已弃用，改用 getPriorityUnreadCounts）
  * @returns {{ high: number, medium: number, low: number }}
  */
 function getPriorityCounts() {
@@ -181,6 +181,20 @@ function getPriorityCounts() {
   const counts = { high: 0, medium: 0, low: 0 };
   for (const [, result] of _priorityCache) {
     counts[result.level]++;
+  }
+  return counts;
+}
+
+/**
+ * 获取各优先级中未读邮件数量（用于徽章）
+ * @returns {{ high: number, medium: number, low: number }}
+ */
+function getPriorityUnreadCounts() {
+  if (!_classificationReady) classifyAllMails();
+  const counts = { high: 0, medium: 0, low: 0 };
+  for (const [mailId, result] of _priorityCache) {
+    const mail = mailData.find(m => m.id === mailId);
+    if (mail && mail.unread) counts[result.level]++;
   }
   return counts;
 }
