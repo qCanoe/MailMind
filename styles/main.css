@@ -375,7 +375,9 @@ h1, h2, h3, h4, h5, h6 { font-family: var(--font-heading); }
 .sidebar.collapsed .compose-btn {
   justify-content: center;
   padding: 0;
-  width: 44px;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
   margin: 0 auto;
 }
 .sidebar.collapsed .compose-btn:hover svg { transform: none; }
@@ -1389,10 +1391,15 @@ h1, h2, h3, h4, h5, h6 { font-family: var(--font-heading); }
 }
 
 /* 侧边栏折叠时隐藏智能文件夹内容 */
-.sidebar.collapsed .sf-folder-item .sf-color-dot { display: none !important; }
 .sidebar.collapsed .sf-folder-item { justify-content: center; }
 .sidebar.collapsed .sf-folder-item .sf-edit-btn { display: none !important; }
 .sidebar.collapsed .sf-empty-hint { display: none !important; }
+/* 折叠时放大彩色圆点，作为文件夹的视觉锚点 */
+.sidebar.collapsed .sf-folder-item .sf-color-dot {
+  width: 28px !important;
+  height: 28px !important;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2) !important;
+}
 
 /* 智能文件夹标题区域颜色 */
 .sf-folder-title { color: #6264a7; }
