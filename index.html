@@ -143,7 +143,6 @@
             </svg>
             <span class="folder-label">归档</span>
           </li>
-          <li class="folder-divider"></li>
           <li class="folder-item" data-folder="deleted">
             <svg class="folder-icon" width="18" height="18" viewBox="0 0 18 18" fill="none">
               <path d="M6 3h6l1 2H5L6 3z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/>
@@ -154,28 +153,58 @@
 
           <!-- ── AI 优先级文件夹 ── -->
           <li class="folder-divider"></li>
-          <li class="folder-section-label" id="aiSectionLabel">
+          <li class="folder-section-label folder-section-label--collapsible"
+              id="aiSectionLabel"
+              aria-expanded="true">
             <svg class="ai-section-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <path d="M12 2L2 7l10 5 10-5-10-5z"/>
               <path d="M2 17l10 5 10-5"/>
               <path d="M2 12l10 5 10-5"/>
             </svg>
             <span class="folder-label">Smart Priority</span>
+            <svg class="ai-section-chevron" width="12" height="12" viewBox="0 0 12 12" fill="none">
+              <path d="M2 4l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
           </li>
-          <li class="folder-item ai-folder" data-folder="ai-high">
+          <li class="folder-item ai-folder ai-priority-item" data-folder="ai-high">
             <span class="priority-dot priority-dot--high"></span>
             <span class="folder-label">高优先级</span>
             <span class="folder-badge folder-badge--high" id="badge-ai-high" style="display:none"></span>
           </li>
-          <li class="folder-item ai-folder" data-folder="ai-medium">
+          <li class="folder-item ai-folder ai-priority-item" data-folder="ai-medium">
             <span class="priority-dot priority-dot--medium"></span>
             <span class="folder-label">中优先级</span>
             <span class="folder-badge folder-badge--medium" id="badge-ai-medium" style="display:none"></span>
           </li>
-          <li class="folder-item ai-folder" data-folder="ai-low">
+          <li class="folder-item ai-folder ai-priority-item" data-folder="ai-low">
             <span class="priority-dot priority-dot--low"></span>
             <span class="folder-label">低优先级</span>
             <span class="folder-badge folder-badge--low" id="badge-ai-low" style="display:none"></span>
+          </li>
+
+          <!-- ── Smart Folders ── -->
+          <li class="folder-divider"></li>
+          <li class="folder-section-label folder-section-label--collapsible"
+              id="sfSectionLabel"
+              aria-expanded="true">
+            <svg class="ai-section-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z"/>
+              <line x1="7" y1="7" x2="7.01" y2="7"/>
+            </svg>
+            <span class="folder-label">Smart Folders</span>
+            <button class="sf-add-btn" id="createSmartFolderBtn" title="Create smart folder" aria-label="Create smart folder">
+              <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+                <line x1="6" y1="1" x2="6" y2="11" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                <line x1="1" y1="6" x2="11" y2="6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+              </svg>
+            </button>
+            <svg class="ai-section-chevron" width="12" height="12" viewBox="0 0 12 12" fill="none">
+              <path d="M2 4l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </li>
+          <!-- Smart folder items rendered by app.js -->
+          <li class="sf-empty-hint sf-section-item" id="sfEmptyHint">
+            <span>Click + to create a smart folder</span>
           </li>
         </ul>
       </nav>
@@ -345,9 +374,73 @@
 
   </div><!-- /.layout -->
 
+  <!-- ========== Smart Folder Modal ========== -->
+  <div class="sf-modal" id="sfModal" hidden aria-modal="true" role="dialog" aria-labelledby="sfModalTitle">
+    <div class="sf-modal-backdrop" id="sfModalBackdrop"></div>
+    <div class="sf-modal-content">
+      <div class="sf-modal-header">
+        <h3 class="sf-modal-title" id="sfModalTitle">Create Smart Folder</h3>
+        <button class="sf-modal-close" id="sfModalClose" aria-label="关闭">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+            <line x1="1" y1="1" x2="13" y2="13" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+            <line x1="13" y1="1" x2="1" y2="13" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+          </svg>
+        </button>
+      </div>
+
+      <div class="sf-modal-body">
+        <div class="sf-field">
+          <label class="sf-label" for="sfName">Folder Name</label>
+          <input
+            id="sfName"
+            class="sf-input"
+            type="text"
+            placeholder="e.g. Work Updates, Academic, Finance…"
+            maxlength="40"
+            autocomplete="off"
+          />
+        </div>
+
+        <div class="sf-field">
+          <label class="sf-label" for="sfDescription">Classification Description</label>
+          <textarea
+            id="sfDescription"
+            class="sf-textarea"
+            rows="4"
+            placeholder="Describe the emails that should go here — the more detail, the better.&#10;e.g. Emails from my advisor or university, including course notices, thesis feedback, and academic deadlines."
+          ></textarea>
+          <span class="sf-field-hint">AI will automatically match emails based on the name and description</span>
+        </div>
+
+        <div class="sf-field">
+          <label class="sf-label">Folder Color</label>
+          <div class="sf-color-swatches" id="sfColorSwatches">
+            <button class="sf-color-swatch selected" data-color="#6264a7" style="background:#6264a7" aria-label="Purple"></button>
+            <button class="sf-color-swatch" data-color="#0f6cbd" style="background:#0f6cbd" aria-label="Blue"></button>
+            <button class="sf-color-swatch" data-color="#00b7c3" style="background:#00b7c3" aria-label="Teal"></button>
+            <button class="sf-color-swatch" data-color="#107c10" style="background:#107c10" aria-label="Green"></button>
+            <button class="sf-color-swatch" data-color="#d83b01" style="background:#d83b01" aria-label="Orange"></button>
+            <button class="sf-color-swatch" data-color="#a4262c" style="background:#a4262c" aria-label="Red"></button>
+            <button class="sf-color-swatch" data-color="#e3008c" style="background:#e3008c" aria-label="Pink"></button>
+            <button class="sf-color-swatch" data-color="#8764b8" style="background:#8764b8" aria-label="Violet"></button>
+          </div>
+        </div>
+      </div>
+
+      <div class="sf-modal-footer">
+        <button class="sf-btn-danger" id="sfDeleteBtn" style="display:none">Delete Folder</button>
+        <div class="sf-footer-right">
+          <button class="sf-btn-cancel" id="sfCancelBtn">Cancel</button>
+          <button class="sf-btn-primary" id="sfSaveBtn">Create Folder</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <script src="scripts/config.js"></script>
   <script src="scripts/mail-data.js"></script>
   <script src="scripts/ai-priority.js"></script>
+  <script src="scripts/smart-folders.js"></script>
   <script src="scripts/embeddings.js" onerror="console.warn('[MailMind AI] embeddings.js 未找到，将在首次搜索时实时生成向量。')"></script>
   <script src="scripts/ai-search.js"></script>
   <script src="scripts/app.js"></script>
