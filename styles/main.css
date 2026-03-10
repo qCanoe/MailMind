@@ -48,6 +48,11 @@
 
   --font-heading:   'Outfit', system-ui, -apple-system, sans-serif;
   --font-body:      'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+
+  /* Smart Priority — 柔和现代配色 */
+  --priority-high:   #c45c5c;
+  --priority-medium: #c9943c;
+  --priority-low:    #5a9b6e;
 }
 
 /* ── Reset & Typography ── */
@@ -357,9 +362,15 @@ h1, h2, h3, h4, h5, h6 { font-family: var(--font-heading); }
 
 .sidebar.collapsed .compose-btn span,
 .sidebar.collapsed .folder-label,
-.sidebar.collapsed .folder-badge,
+.sidebar.collapsed .folder-section-label,
+.sidebar.collapsed .folder-section-label--collapsible,
 .sidebar.collapsed .storage-info,
 .sidebar.collapsed .folder-divider { display: none; }
+
+/* 普通文件夹徽章在折叠时隐藏（需 !important 覆盖 JS 内联 style） */
+.sidebar.collapsed .folder-badge:not(.folder-badge--high):not(.folder-badge--medium):not(.folder-badge--low) {
+  display: none !important;
+}
 
 .sidebar.collapsed .compose-btn {
   justify-content: center;
@@ -1125,7 +1136,42 @@ h1, h2, h3, h4, h5, h6 { font-family: var(--font-heading); }
   user-select: none;
 }
 .ai-section-icon { flex: none; opacity: 0.7; }
-.sidebar.collapsed .folder-section-label { display: none; }
+
+/* 可折叠标题行 */
+.folder-section-label--collapsible {
+  cursor: pointer;
+  border-radius: var(--radius-md);
+  transition: background 0.15s, color 0.15s;
+}
+.folder-section-label--collapsible:hover {
+  background: var(--bg-sidebar-hover);
+  color: var(--text-secondary);
+}
+
+/* 折叠箭头 */
+.ai-section-chevron {
+  margin-left: auto;
+  flex: none;
+  color: var(--text-muted);
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.folder-section-label--collapsible[aria-expanded="false"] .ai-section-chevron {
+  transform: rotate(-90deg);
+}
+
+/* 子项收起动画 */
+.ai-priority-item {
+  overflow: hidden;
+  max-height: 44px;
+  opacity: 1;
+  transition: max-height 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+              opacity 0.2s ease;
+}
+.ai-priority-item.collapsed {
+  max-height: 0 !important;
+  opacity: 0;
+  pointer-events: none;
+}
 
 /* 优先级小圆点 */
 .priority-dot {
@@ -1136,25 +1182,44 @@ h1, h2, h3, h4, h5, h6 { font-family: var(--font-heading); }
   box-shadow: 0 0 0 2px transparent;
   transition: box-shadow 0.2s;
 }
-.priority-dot--high   { background: #e53935; }
-.priority-dot--medium { background: #f59f00; }
-.priority-dot--low    { background: #43a047; }
+.priority-dot--high   { background: var(--priority-high); }
+.priority-dot--medium { background: var(--priority-medium); }
+.priority-dot--low    { background: var(--priority-low); }
 
-.folder-item.ai-folder:hover .priority-dot--high   { box-shadow: 0 0 0 3px rgba(229,57,53,0.18); }
-.folder-item.ai-folder:hover .priority-dot--medium { box-shadow: 0 0 0 3px rgba(245,159,0,0.18); }
-.folder-item.ai-folder:hover .priority-dot--low    { box-shadow: 0 0 0 3px rgba(67,160,71,0.18); }
+.folder-item.ai-folder:hover .priority-dot--high   { box-shadow: 0 0 0 3px rgba(196, 92, 92, 0.2); }
+.folder-item.ai-folder:hover .priority-dot--medium { box-shadow: 0 0 0 3px rgba(201, 148, 60, 0.2); }
+.folder-item.ai-folder:hover .priority-dot--low    { box-shadow: 0 0 0 3px rgba(90, 155, 110, 0.2); }
 
-.folder-item.ai-folder.active .priority-dot--high   { box-shadow: 0 0 0 3px rgba(229,57,53,0.25); }
-.folder-item.ai-folder.active .priority-dot--medium { box-shadow: 0 0 0 3px rgba(245,159,0,0.25); }
-.folder-item.ai-folder.active .priority-dot--low    { box-shadow: 0 0 0 3px rgba(67,160,71,0.25); }
+.folder-item.ai-folder.active .priority-dot--high   { box-shadow: 0 0 0 3px rgba(196, 92, 92, 0.28); }
+.folder-item.ai-folder.active .priority-dot--medium { box-shadow: 0 0 0 3px rgba(201, 148, 60, 0.28); }
+.folder-item.ai-folder.active .priority-dot--low    { box-shadow: 0 0 0 3px rgba(90, 155, 110, 0.28); }
 
-/* AI 文件夹徽章颜色 */
-.folder-badge--high   { background: #e53935 !important; box-shadow: 0 2px 4px rgba(229,57,53,0.35) !important; }
-.folder-badge--medium { background: #f59f00 !important; box-shadow: 0 2px 4px rgba(245,159,0,0.35) !important; }
-.folder-badge--low    { background: #43a047 !important; box-shadow: 0 2px 4px rgba(67,160,71,0.35) !important; }
+/* AI 文件夹徽章 — 任何状态下统一固定正圆，消除字形宽窄差异 */
+.folder-badge--high,
+.folder-badge--medium,
+.folder-badge--low {
+  min-width: 22px !important;
+  width: 22px !important;
+  height: 22px !important;
+  padding: 0 !important;
+  border-radius: 50% !important;
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  letter-spacing: 0 !important;
+}
+.folder-badge--high   { background: var(--priority-high) !important; box-shadow: 0 2px 6px rgba(196, 92, 92, 0.3) !important; }
+.folder-badge--medium { background: var(--priority-medium) !important; box-shadow: 0 2px 6px rgba(201, 148, 60, 0.3) !important; }
+.folder-badge--low    { background: var(--priority-low) !important; box-shadow: 0 2px 6px rgba(90, 155, 110, 0.3) !important; }
 
-/* 侧边栏折叠时隐藏优先级文件夹标签 */
-.sidebar.collapsed .ai-folder .priority-dot { margin: 0 auto; }
+/* 侧边栏折叠时：隐藏小圆点，徽章放大居中 */
+.sidebar.collapsed .ai-folder .priority-dot { display: none !important; }
+.sidebar.collapsed .ai-folder { justify-content: center; }
+.sidebar.collapsed .ai-folder .folder-badge {
+  min-width: 28px !important;
+  width: 28px !important;
+  height: 28px !important;
+  font-size: 12px !important;
+}
 
 /* 邮件列表标题 — AI 文件夹时显示颜色条 */
 .ai-folder-title::before {
@@ -1168,20 +1233,20 @@ h1, h2, h3, h4, h5, h6 { font-family: var(--font-heading); }
   position: relative;
   top: -1px;
 }
-.ai-folder-title[data-level="high"]::before   { background: #e53935; box-shadow: 0 0 0 3px rgba(229,57,53,0.18); }
-.ai-folder-title[data-level="medium"]::before { background: #f59f00; box-shadow: 0 0 0 3px rgba(245,159,0,0.18); }
-.ai-folder-title[data-level="low"]::before    { background: #43a047; box-shadow: 0 0 0 3px rgba(67,160,71,0.18); }
+.ai-folder-title[data-level="high"]::before   { background: var(--priority-high); box-shadow: 0 0 0 3px rgba(196, 92, 92, 0.18); }
+.ai-folder-title[data-level="medium"]::before { background: var(--priority-medium); box-shadow: 0 0 0 3px rgba(201, 148, 60, 0.18); }
+.ai-folder-title[data-level="low"]::before    { background: var(--priority-low); box-shadow: 0 0 0 3px rgba(90, 155, 110, 0.18); }
 
 /* AI 优先级分类横幅 */
 .mail-list-ai-header--priority {
   border-left: 3px solid transparent;
 }
-.mail-list-ai-header--high   { border-left-color: #e53935; background: rgba(229,57,53,0.05); }
-.mail-list-ai-header--medium { border-left-color: #f59f00; background: rgba(245,159,0,0.05); }
-.mail-list-ai-header--low    { border-left-color: #43a047; background: rgba(67,160,71,0.05); }
-.mail-list-ai-header--high   svg { color: #e53935; }
-.mail-list-ai-header--medium svg { color: #f59f00; }
-.mail-list-ai-header--low    svg { color: #43a047; }
+.mail-list-ai-header--high   { border-left-color: var(--priority-high); background: rgba(196, 92, 92, 0.06); }
+.mail-list-ai-header--medium { border-left-color: var(--priority-medium); background: rgba(201, 148, 60, 0.06); }
+.mail-list-ai-header--low    { border-left-color: var(--priority-low); background: rgba(90, 155, 110, 0.06); }
+.mail-list-ai-header--high   svg { color: var(--priority-high); }
+.mail-list-ai-header--medium svg { color: var(--priority-medium); }
+.mail-list-ai-header--low    svg { color: var(--priority-low); }
 
 .ai-header-desc {
   color: var(--text-muted);
@@ -1204,9 +1269,9 @@ h1, h2, h3, h4, h5, h6 { font-family: var(--font-heading); }
   justify-content: center;
   color: #fff;
 }
-.priority-score-badge--high   { background: #e53935; box-shadow: 0 1px 4px rgba(229,57,53,0.4); }
-.priority-score-badge--medium { background: #f59f00; box-shadow: 0 1px 4px rgba(245,159,0,0.4); }
-.priority-score-badge--low    { background: #43a047; box-shadow: 0 1px 4px rgba(67,160,71,0.4); }
+.priority-score-badge--high   { background: var(--priority-high); box-shadow: 0 1px 4px rgba(196, 92, 92, 0.35); }
+.priority-score-badge--medium { background: var(--priority-medium); box-shadow: 0 1px 4px rgba(201, 148, 60, 0.35); }
+.priority-score-badge--low    { background: var(--priority-low); box-shadow: 0 1px 4px rgba(90, 155, 110, 0.35); }
 
 /* 邮件列表项中的 AI 分类理由 */
 .mail-priority-reason {
@@ -1228,6 +1293,334 @@ h1, h2, h3, h4, h5, h6 { font-family: var(--font-heading); }
 .mail-item.selected .mail-priority-reason svg { opacity: 0.7; }
 
 /* ============================================================
+   SMART FOLDERS — 侧边栏区域
+   ============================================================ */
+
+/* 智能文件夹节标题中的"+"添加按钮 */
+.sf-add-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  color: var(--text-muted);
+  transition: background 0.15s, color 0.15s, transform 0.15s;
+  flex: none;
+  margin-left: 2px;
+}
+.sf-add-btn:hover {
+  background: var(--ms-blue);
+  color: #fff;
+  transform: scale(1.1);
+}
+/* 防止点击"+"时触发父级折叠 */
+.folder-section-label--collapsible .sf-add-btn { pointer-events: auto; }
+
+/* chevron 在 sfSectionLabel 中靠右显示 */
+#sfSectionLabel .ai-section-chevron { margin-left: auto; }
+#sfSectionLabel .sf-add-btn { margin-left: 0; }
+
+/* 智能文件夹收起动画 */
+.sf-section-item {
+  overflow: hidden;
+  max-height: 44px;
+  opacity: 1;
+  transition: max-height 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+              opacity 0.2s ease;
+}
+.sf-section-item.collapsed {
+  max-height: 0 !important;
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* 无文件夹时的提示占位 */
+.sf-empty-hint {
+  display: list-item;
+  padding: 6px 12px 6px 20px;
+  font-size: 12px;
+  color: var(--text-muted);
+  font-style: italic;
+  cursor: default;
+  height: auto;
+  user-select: none;
+  white-space: nowrap;
+}
+
+/* 智能文件夹彩色圆点 */
+.sf-color-dot {
+  flex: none;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  box-shadow: 0 0 0 2px transparent;
+  transition: box-shadow 0.2s, transform 0.2s;
+}
+.folder-item.sf-folder-item:hover .sf-color-dot {
+  box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.12);
+  transform: scale(1.15);
+}
+.folder-item.sf-folder-item.active .sf-color-dot {
+  box-shadow: 0 0 0 3px rgba(98, 100, 167, 0.3);
+}
+
+/* 编辑铅笔按钮（默认隐藏，hover 后出现） */
+.sf-edit-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  color: var(--text-muted);
+  opacity: 0;
+  flex: none;
+  transition: opacity 0.15s, background 0.15s, color 0.15s;
+  pointer-events: none;
+}
+.folder-item.sf-folder-item:hover .sf-edit-btn {
+  opacity: 1;
+  pointer-events: auto;
+}
+.sf-edit-btn:hover {
+  background: rgba(15, 108, 189, 0.12);
+  color: var(--ms-blue);
+}
+
+/* 侧边栏折叠时隐藏智能文件夹内容 */
+.sidebar.collapsed .sf-folder-item .sf-color-dot { display: none !important; }
+.sidebar.collapsed .sf-folder-item { justify-content: center; }
+.sidebar.collapsed .sf-folder-item .sf-edit-btn { display: none !important; }
+.sidebar.collapsed .sf-empty-hint { display: none !important; }
+
+/* 智能文件夹标题区域颜色 */
+.sf-folder-title { color: #6264a7; }
+
+/* 邮件列表横幅 — 智能文件夹 */
+.mail-list-ai-header--sf {
+  background: linear-gradient(135deg, rgba(98, 100, 167, 0.06), rgba(98, 100, 167, 0.02));
+  border-left: 3px solid #6264a7;
+  color: #6264a7;
+}
+.mail-list-ai-header--sf strong { color: #6264a7; }
+
+/* ============================================================
+   SMART FOLDERS — 创建/编辑 Modal
+   ============================================================ */
+
+.sf-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+/* hidden 属性默认 display:none，但 display:flex 会覆盖它，所以必须显式处理 */
+.sf-modal[hidden] { display: none !important; }
+.sf-modal:not([hidden]) { display: flex; }
+.sf-modal.visible { opacity: 1; }
+
+.sf-modal-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.35);
+  backdrop-filter: blur(3px);
+}
+
+.sf-modal-content {
+  position: relative;
+  z-index: 1;
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.18), 0 4px 16px rgba(0, 0, 0, 0.08);
+  width: 460px;
+  max-width: calc(100vw - 32px);
+  display: flex;
+  flex-direction: column;
+  transform: translateY(8px);
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.sf-modal.visible .sf-modal-content { transform: translateY(0); }
+
+.sf-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 24px 24px 0;
+}
+
+.sf-modal-title {
+  font-family: var(--font-heading);
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text-primary);
+  letter-spacing: -0.3px;
+}
+
+.sf-modal-close {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-muted);
+  transition: background 0.15s, color 0.15s;
+  flex: none;
+}
+.sf-modal-close:hover { background: var(--bg-sidebar-hover); color: var(--text-primary); }
+
+.sf-modal-body {
+  padding: 20px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.sf-field { display: flex; flex-direction: column; gap: 7px; }
+
+.sf-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  letter-spacing: 0.1px;
+}
+
+.sf-input,
+.sf-textarea {
+  width: 100%;
+  padding: 10px 14px;
+  border: 1.5px solid var(--border-light);
+  border-radius: var(--radius-md);
+  font-size: 14px;
+  font-family: var(--font-body);
+  color: var(--text-primary);
+  background: var(--bg-main);
+  transition: border-color 0.2s, box-shadow 0.2s;
+  outline: none;
+  resize: none;
+  box-sizing: border-box;
+}
+.sf-input:focus,
+.sf-textarea:focus {
+  border-color: #6264a7;
+  box-shadow: 0 0 0 3px rgba(98, 100, 167, 0.15);
+}
+.sf-input::placeholder,
+.sf-textarea::placeholder {
+  color: var(--text-muted);
+  font-size: 13px;
+}
+
+.sf-field-hint {
+  font-size: 12px;
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+/* 颜色选择器 */
+.sf-color-swatches {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.sf-color-swatch {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  border: 2.5px solid transparent;
+  cursor: pointer;
+  transition: transform 0.15s, box-shadow 0.15s, border-color 0.15s;
+  outline: none;
+}
+.sf-color-swatch:hover {
+  transform: scale(1.18);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+.sf-color-swatch.selected {
+  border-color: #fff;
+  box-shadow: 0 0 0 2px #fff, 0 0 0 4px rgba(0, 0, 0, 0.4);
+  transform: scale(1.1);
+}
+
+.sf-modal-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 24px 20px;
+  border-top: 1px solid var(--border-light);
+  gap: 10px;
+}
+
+.sf-footer-right {
+  display: flex;
+  gap: 10px;
+  margin-left: auto;
+}
+
+/* 按钮通用基础 */
+.sf-btn-cancel,
+.sf-btn-primary,
+.sf-btn-danger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 36px;
+  padding: 0 18px;
+  border-radius: var(--radius-md);
+  font-size: 14px;
+  font-weight: 600;
+  font-family: var(--font-body);
+  cursor: pointer;
+  transition: all 0.18s ease;
+  white-space: nowrap;
+}
+
+.sf-btn-cancel {
+  color: var(--text-secondary);
+  background: transparent;
+  border: 1.5px solid var(--border-light);
+}
+.sf-btn-cancel:hover {
+  background: var(--bg-sidebar-hover);
+  color: var(--text-primary);
+  border-color: rgba(0, 0, 0, 0.15);
+}
+
+.sf-btn-primary {
+  background: linear-gradient(135deg, #6264a7, #7b5ea7);
+  color: #fff;
+  border: none;
+  box-shadow: 0 2px 8px rgba(98, 100, 167, 0.35);
+}
+.sf-btn-primary:hover {
+  background: linear-gradient(135deg, #4f50a0, #6a4e9a);
+  box-shadow: 0 4px 14px rgba(98, 100, 167, 0.45);
+  transform: translateY(-1px);
+}
+.sf-btn-primary:active { transform: translateY(0); }
+.sf-btn-primary:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.sf-btn-danger {
+  color: #a4262c;
+  background: transparent;
+  border: 1.5px solid rgba(164, 38, 44, 0.3);
+}
+.sf-btn-danger:hover {
+  background: rgba(164, 38, 44, 0.07);
+  border-color: rgba(164, 38, 44, 0.5);
+}
+
+/* ============================================================
    RESPONSIVE — narrow viewport
    ============================================================ */
 @media (max-width: 960px) {
@@ -1244,6 +1637,16 @@ h1, h2, h3, h4, h5, h6 { font-family: var(--font-heading); }
   .sidebar .compose-btn { justify-content: center; padding: 0; width: 44px; margin: 0 auto; }
   .sidebar .compose-btn span { display: none; }
   .sidebar .folder-item { justify-content: center; padding: 0; width: 44px; margin: 0 auto; }
+  .sidebar .ai-folder .priority-dot { display: none; }
+  .sidebar .ai-folder { justify-content: center; }
+  .sidebar .ai-folder .folder-badge {
+    min-width: 28px !important;
+    width: 28px !important;
+    height: 28px !important;
+    padding: 0 !important;
+    border-radius: 50% !important;
+    font-size: 12px !important;
+  }
 }
 @media (max-width: 640px) {
   :root { --list-width: 280px; }
