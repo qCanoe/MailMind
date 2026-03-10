@@ -151,6 +151,32 @@
             </svg>
             <span class="folder-label">已删除</span>
           </li>
+
+          <!-- ── AI 优先级文件夹 ── -->
+          <li class="folder-divider"></li>
+          <li class="folder-section-label" id="aiSectionLabel">
+            <svg class="ai-section-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+              <path d="M2 17l10 5 10-5"/>
+              <path d="M2 12l10 5 10-5"/>
+            </svg>
+            <span class="folder-label">Smart Priority</span>
+          </li>
+          <li class="folder-item ai-folder" data-folder="ai-high">
+            <span class="priority-dot priority-dot--high"></span>
+            <span class="folder-label">高优先级</span>
+            <span class="folder-badge folder-badge--high" id="badge-ai-high" style="display:none"></span>
+          </li>
+          <li class="folder-item ai-folder" data-folder="ai-medium">
+            <span class="priority-dot priority-dot--medium"></span>
+            <span class="folder-label">中优先级</span>
+            <span class="folder-badge folder-badge--medium" id="badge-ai-medium" style="display:none"></span>
+          </li>
+          <li class="folder-item ai-folder" data-folder="ai-low">
+            <span class="priority-dot priority-dot--low"></span>
+            <span class="folder-label">低优先级</span>
+            <span class="folder-badge folder-badge--low" id="badge-ai-low" style="display:none"></span>
+          </li>
         </ul>
       </nav>
 
@@ -321,6 +347,7 @@
 
   <script src="scripts/config.js"></script>
   <script src="scripts/mail-data.js"></script>
+  <script src="scripts/ai-priority.js"></script>
   <script src="scripts/embeddings.js" onerror="console.warn('[MailMind AI] embeddings.js 未找到，将在首次搜索时实时生成向量。')"></script>
   <script src="scripts/ai-search.js"></script>
   <script src="scripts/app.js"></script>

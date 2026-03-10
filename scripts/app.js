@@ -96,6 +96,12 @@ function highlightText(container, query) {
    SECTION 4: FILTERING
    ────────────────────────────────────────────────────────────── */
 
+/** AI 优先级文件夹的 folder key 集合 */
+const AI_PRIORITY_FOLDERS = new Set(['ai-high', 'ai-medium', 'ai-low']);
+
+/** folder key → 优先级等级映射 */
+const AI_FOLDER_LEVEL = { 'ai-high': 'high', 'ai-medium': 'medium', 'ai-low': 'low' };
+
 /**
  * 根据当前 state 过滤邮件列表
  * 这是搜索和筛选功能未来的统一入口
@@ -106,12 +112,22 @@ function getFilteredMails() {
     return state.aiResults.map(r => r.mail);
   }
 
-  // "已加星标"是跨文件夹的虚拟视图，按 starred 属性筛选；其余按 folder 字段筛选
-  let mails = state.activeFolder === 'starred'
-    ? mailData.filter(m => m.starred)
-    : mailData.filter(m => m.folder === state.activeFolder);
+  let mails;
 
-  // Tab 筛选
+  if (AI_PRIORITY_FOLDERS.has(state.activeFolder)) {
+    // AI 优先级虚拟文件夹：通过分类引擎获取
+    const level = AI_FOLDER_LEVEL[state.activeFolder];
+    mails = typeof getMailsByPriority === 'function'
+      ? getMailsByPriority(level)
+      : [];
+  } else if (state.activeFolder === 'starred') {
+    // "已加星标"是跨文件夹的虚拟视图
+    mails = mailData.filter(m => m.starred);
+  } else {
+    mails = mailData.filter(m => m.folder === state.activeFolder);
+  }
+
+  // Tab 筛选（AI 优先级文件夹也支持 unread/flagged 筛选）
   if (state.activeTab === 'unread')  mails = mails.filter(m => m.unread);
   if (state.activeTab === 'flagged') mails = mails.filter(m => m.flagged || m.starred);
 
@@ -126,15 +142,18 @@ function getFilteredMails() {
     );
   }
 
-  // 默认按时间倒序
-  mails.sort((a, b) => b.date - a.date);
+  // AI 优先级文件夹已在 getMailsByPriority() 内排序；其余按时间倒序
+  if (!AI_PRIORITY_FOLDERS.has(state.activeFolder)) {
+    mails.sort((a, b) => b.date - a.date);
+  }
+
   return mails;
 }
 
 function getMailItemMarkup(mail) {
   const hasIcons = mail.starred || mail.attachments.length > 0;
 
-  // AI 模式：显示 LLM 推理说明 或 向量相似度百分比
+  // AI 搜索模式：显示 LLM 推理说明 或 向量相似度百分比
   let aiHintHtml = '';
   if (state.aiMode) {
     const result = state.aiResults.find(r => r.mail.id === mail.id);
@@ -157,6 +176,21 @@ function getMailItemMarkup(mail) {
     }
   }
 
+  // AI 优先级文件夹：显示分类理由
+  let priorityBadgeHtml = '';
+  let priorityReasonHtml = '';
+  if (AI_PRIORITY_FOLDERS.has(state.activeFolder) && typeof getMailPriority === 'function') {
+    const p = getMailPriority(mail.id);
+    if (p) {
+      priorityReasonHtml = `<div class="mail-priority-reason">
+        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/>
+        </svg>
+        ${escapeHtml(p.reason)}
+      </div>`;
+    }
+  }
+
   return `
       <div class="mail-item-top">
         <span class="mail-sender">${escapeHtml(mail.from.name)}</span>
@@ -172,6 +206,7 @@ function getMailItemMarkup(mail) {
       </div>
       <div class="mail-subject">${escapeHtml(mail.subject)}</div>
       <div class="mail-preview">${escapeHtml(mail.preview)}</div>
+      ${priorityReasonHtml}
       ${reasonHtml}
     `;
 }
@@ -210,7 +245,7 @@ function renderMailList() {
 
   listEl.innerHTML = '';
 
-  // AI 模式时，在列表顶部插入结果说明横幅
+  // AI 搜索模式时，在列表顶部插入结果说明横幅
   if (state.aiMode) {
     const modeLabel = state.aiSearchType === 'llm'
       ? 'AI 理解搜索'
@@ -224,6 +259,28 @@ function renderMailList() {
         <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
       </svg>
       ${modeLabel} · ${mails.length} 条结果，跨所有文件夹
+    `;
+    listEl.appendChild(header);
+  }
+
+  // AI 优先级文件夹：在列表顶部插入分类说明横幅
+  if (AI_PRIORITY_FOLDERS.has(state.activeFolder)) {
+    const level = AI_FOLDER_LEVEL[state.activeFolder];
+    const levelLabels = { high: 'High Priority', medium: 'Medium Priority', low: 'Low Priority' };
+    const levelDescs  = {
+      high:   'Emails with deadlines, action items, or urgent signals detected by AI',
+      medium: 'Work and personal emails that need attention but have no immediate deadline',
+      low:    'Notifications, subscriptions, and automated emails',
+    };
+    const header = document.createElement('li');
+    header.className = `mail-list-ai-header mail-list-ai-header--priority mail-list-ai-header--${level}`;
+    header.innerHTML = `
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+        <path d="M2 17l10 5 10-5"/>
+        <path d="M2 12l10 5 10-5"/>
+      </svg>
+      <span><strong>${levelLabels[level]}</strong> · ${mails.length} 封邮件 &nbsp;<span class="ai-header-desc">${levelDescs[level]}</span></span>
     `;
     listEl.appendChild(header);
   }
@@ -357,14 +414,25 @@ function renderReadingPane(mail) {
    ────────────────────────────────────────────────────────────── */
 
 function renderBadges() {
-  const folders = ['inbox', 'drafts'];
-  folders.forEach(f => {
+  // 标准文件夹徽章（显示未读数）
+  ['inbox', 'drafts'].forEach(f => {
     const badgeEl = document.getElementById(`badge-${f}`);
     if (!badgeEl) return;
     const count = mailData.filter(m => m.folder === f && m.unread).length;
     badgeEl.textContent = count;
     badgeEl.style.display = count ? 'flex' : 'none';
   });
+
+  // AI 优先级文件夹徽章（显示每类邮件总数）
+  if (typeof getPriorityCounts === 'function') {
+    const counts = getPriorityCounts();
+    [['high', counts.high], ['medium', counts.medium], ['low', counts.low]].forEach(([level, count]) => {
+      const badgeEl = document.getElementById(`badge-ai-${level}`);
+      if (!badgeEl) return;
+      badgeEl.textContent = count;
+      badgeEl.style.display = count ? 'flex' : 'none';
+    });
+  }
 }
 
 /* ──────────────────────────────────────────────────────────────
@@ -382,15 +450,28 @@ function selectFolder(folderName) {
 
   // Update folder title
   const titles = {
-    inbox:   '收件箱',
-    starred: '已加星标',
-    drafts:  '草稿箱',
-    sent:    '已发送',
-    junk:    '垃圾邮件',
-    archive: '归档',
-    deleted: '已删除',
+    inbox:     '收件箱',
+    starred:   '已加星标',
+    drafts:    '草稿箱',
+    sent:      '已发送',
+    junk:      '垃圾邮件',
+    archive:   '归档',
+    deleted:   '已删除',
+    'ai-high':   'High Priority',
+    'ai-medium': 'Medium Priority',
+    'ai-low':    'Low Priority',
   };
   document.getElementById('folderTitle').textContent = titles[folderName] || folderName;
+
+  // AI 文件夹：在标题区域显示 AI 标记
+  const titleEl = document.getElementById('folderTitle');
+  if (AI_PRIORITY_FOLDERS.has(folderName)) {
+    titleEl.classList.add('ai-folder-title');
+    titleEl.dataset.level = AI_FOLDER_LEVEL[folderName];
+  } else {
+    titleEl.classList.remove('ai-folder-title');
+    delete titleEl.dataset.level;
+  }
 
   renderMailList();
   renderReadingPane(null);

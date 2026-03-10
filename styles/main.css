@@ -1107,6 +1107,127 @@ h1, h2, h3, h4, h5, h6 { font-family: var(--font-heading); }
 }
 
 /* ============================================================
+   AI 优先级文件夹
+   ============================================================ */
+
+/* 侧边栏分区标签 */
+.folder-section-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 32px;
+  padding: 0 12px;
+  color: var(--text-muted);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+  user-select: none;
+}
+.ai-section-icon { flex: none; opacity: 0.7; }
+.sidebar.collapsed .folder-section-label { display: none; }
+
+/* 优先级小圆点 */
+.priority-dot {
+  flex: none;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  box-shadow: 0 0 0 2px transparent;
+  transition: box-shadow 0.2s;
+}
+.priority-dot--high   { background: #e53935; }
+.priority-dot--medium { background: #f59f00; }
+.priority-dot--low    { background: #43a047; }
+
+.folder-item.ai-folder:hover .priority-dot--high   { box-shadow: 0 0 0 3px rgba(229,57,53,0.18); }
+.folder-item.ai-folder:hover .priority-dot--medium { box-shadow: 0 0 0 3px rgba(245,159,0,0.18); }
+.folder-item.ai-folder:hover .priority-dot--low    { box-shadow: 0 0 0 3px rgba(67,160,71,0.18); }
+
+.folder-item.ai-folder.active .priority-dot--high   { box-shadow: 0 0 0 3px rgba(229,57,53,0.25); }
+.folder-item.ai-folder.active .priority-dot--medium { box-shadow: 0 0 0 3px rgba(245,159,0,0.25); }
+.folder-item.ai-folder.active .priority-dot--low    { box-shadow: 0 0 0 3px rgba(67,160,71,0.25); }
+
+/* AI 文件夹徽章颜色 */
+.folder-badge--high   { background: #e53935 !important; box-shadow: 0 2px 4px rgba(229,57,53,0.35) !important; }
+.folder-badge--medium { background: #f59f00 !important; box-shadow: 0 2px 4px rgba(245,159,0,0.35) !important; }
+.folder-badge--low    { background: #43a047 !important; box-shadow: 0 2px 4px rgba(67,160,71,0.35) !important; }
+
+/* 侧边栏折叠时隐藏优先级文件夹标签 */
+.sidebar.collapsed .ai-folder .priority-dot { margin: 0 auto; }
+
+/* 邮件列表标题 — AI 文件夹时显示颜色条 */
+.ai-folder-title::before {
+  content: '';
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  margin-right: 10px;
+  vertical-align: middle;
+  position: relative;
+  top: -1px;
+}
+.ai-folder-title[data-level="high"]::before   { background: #e53935; box-shadow: 0 0 0 3px rgba(229,57,53,0.18); }
+.ai-folder-title[data-level="medium"]::before { background: #f59f00; box-shadow: 0 0 0 3px rgba(245,159,0,0.18); }
+.ai-folder-title[data-level="low"]::before    { background: #43a047; box-shadow: 0 0 0 3px rgba(67,160,71,0.18); }
+
+/* AI 优先级分类横幅 */
+.mail-list-ai-header--priority {
+  border-left: 3px solid transparent;
+}
+.mail-list-ai-header--high   { border-left-color: #e53935; background: rgba(229,57,53,0.05); }
+.mail-list-ai-header--medium { border-left-color: #f59f00; background: rgba(245,159,0,0.05); }
+.mail-list-ai-header--low    { border-left-color: #43a047; background: rgba(67,160,71,0.05); }
+.mail-list-ai-header--high   svg { color: #e53935; }
+.mail-list-ai-header--medium svg { color: #f59f00; }
+.mail-list-ai-header--low    svg { color: #43a047; }
+
+.ai-header-desc {
+  color: var(--text-muted);
+  font-weight: 400;
+  font-size: 11px;
+}
+
+/* 邮件列表项中的优先级分数徽章 */
+.priority-score-badge {
+  flex: none;
+  font-size: 11px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  min-width: 28px;
+  height: 20px;
+  padding: 0 6px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+}
+.priority-score-badge--high   { background: #e53935; box-shadow: 0 1px 4px rgba(229,57,53,0.4); }
+.priority-score-badge--medium { background: #f59f00; box-shadow: 0 1px 4px rgba(245,159,0,0.4); }
+.priority-score-badge--low    { background: #43a047; box-shadow: 0 1px 4px rgba(67,160,71,0.4); }
+
+/* 邮件列表项中的 AI 分类理由 */
+.mail-priority-reason {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-top: 5px;
+  line-height: 1.3;
+}
+.mail-priority-reason svg {
+  flex: none;
+  opacity: 0.5;
+}
+
+/* 选中状态下的分类理由颜色 */
+.mail-item.selected .mail-priority-reason { color: rgba(15, 108, 189, 0.7); }
+.mail-item.selected .mail-priority-reason svg { opacity: 0.7; }
+
+/* ============================================================
    RESPONSIVE — narrow viewport
    ============================================================ */
 @media (max-width: 960px) {
@@ -1118,7 +1239,8 @@ h1, h2, h3, h4, h5, h6 { font-family: var(--font-heading); }
   .sidebar .folder-label,
   .sidebar .folder-badge,
   .sidebar .storage-info,
-  .sidebar .folder-divider { display: none; }
+  .sidebar .folder-divider,
+  .sidebar .folder-section-label { display: none; }
   .sidebar .compose-btn { justify-content: center; padding: 0; width: 44px; margin: 0 auto; }
   .sidebar .compose-btn span { display: none; }
   .sidebar .folder-item { justify-content: center; padding: 0; width: 44px; margin: 0 auto; }

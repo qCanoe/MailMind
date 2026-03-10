@@ -1,28 +1,29 @@
 # MailMind
 
 MailMind is a front-end email prototype inspired by Microsoft Outlook Web.
-It is designed as the foundation for a course project focused on improving the email experience through better organization, AI-powered search, and interaction design, without implementing real sending or receiving workflows.
+It is designed as the foundation for a course project focused on improving the email experience through better organization, lightweight search, and interaction design, without implementing real sending or receiving workflows.
 
 ## Overview
 
-This project ships as a static HTML/CSS/JavaScript prototype with mock email data.
-The current version recreates an Outlook-style interface and adds **AI search** that truly understands email content via LLM (GPT-5.4), not just keyword or vector similarity matching.
+This project currently ships as a static HTML/CSS/JavaScript prototype with mock email data.
+The goal of the first version is to recreate a familiar Outlook-style interface while keeping the codebase simple enough to extend with future features such as:
+
+- smarter mail organization
+- lightweight search and filtering
+- improved mail triage interactions
+- visual experiments for inbox productivity
 
 ## Current Features
 
 - Outlook-inspired three-panel layout
-- Top navigation bar with search
-- **AI Search** — LLM-based search that reads and understands emails (GPT-5.4)
-- **AI toggle** — Enable/disable AI search on the left of the search bar
-- **Copilot panel** — Natural language answers to queries like "有哪些邀请" or "我下周有哪些截止日期"
-- Fallback to vector semantic search when LLM is unavailable
-- Collapsible sidebar with folders
-- Mail list with unread, starred, and attachment states
-- Reading pane for detailed email content
-- Client-side keyword search with highlighting
-- Tab filtering for all, unread, and flagged emails
-- Starred mail virtual view across folders
-- Mock data for inbox, drafts, sent, junk, and archive
+- top navigation bar with search
+- collapsible sidebar with folders
+- mail list with unread, starred, and attachment states
+- reading pane for detailed email content
+- client-side search with keyword highlighting
+- tab filtering for all, unread, and flagged emails
+- starred mail virtual view across folders
+- mock data for inbox, drafts, sent, junk, and archive
 
 ## Tech Stack
 
@@ -30,9 +31,8 @@ The current version recreates an Outlook-style interface and adds **AI search** 
 - CSS3
 - Vanilla JavaScript
 - Google Fonts (`Outfit` and `Plus Jakarta Sans`)
-- OpenAI API (Chat Completions + Embeddings)
 
-No backend is required; API calls are made directly from the browser.
+No backend is required for the current version.
 
 ## Project Structure
 
@@ -41,35 +41,20 @@ No backend is required; API calls are made directly from the browser.
 ├── index.html
 ├── README.md
 ├── scripts/
-│   ├── config.js          # API key (add to .gitignore)
-│   ├── mail-data.js       # Mock mail data
-│   ├── app.js             # Main app logic
-│   ├── ai-search.js        # LLM + vector search
-│   └── generate-embeddings.js
-├── styles/
-│   └── main.css
-└── mvp.md
+│   └── app.js
+└── styles/
+    └── main.css
 ```
 
 ## Getting Started
 
-### 1. API Key Setup
+### Option 1: Open directly
 
-Create `scripts/config.js` with your OpenAI API key:
+Open `index.html` in your browser.
 
-```javascript
-const OPENAI_API_KEY = 'sk-your-api-key-here';
-```
+### Option 2: Use a local static server
 
-> `config.js` should be in `.gitignore` to avoid committing secrets.
-
-### 2. Run the App
-
-**Option A: Open directly**
-
-Open `index.html` in your browser. AI search will work if `config.js` is present and the key is valid.
-
-**Option B: Local static server**
+If you prefer a local server, you can use any simple static hosting tool, for example:
 
 ```bash
 python -m http.server 8000
@@ -77,35 +62,44 @@ python -m http.server 8000
 
 Then open `http://localhost:8000`.
 
-### 3. Optional: Pre-generate Embeddings
-
-To avoid real-time embedding calls on first search, run:
-
-```bash
-node scripts/generate-embeddings.js
-```
-
-This produces `scripts/embeddings.js` with precomputed vectors for the mock data.
-
 ## Design Direction
 
 The interface combines:
 
-- The information architecture of Outlook Web
-- A Fluent-inspired visual language
-- Modern web UI details such as softer depth, refined typography, and lightweight motion
+- the information architecture of Outlook Web
+- a Fluent-inspired visual language
+- modern web UI details such as softer depth, refined typography, and lightweight motion
+
+The current implementation prioritizes UI fidelity and extensibility over production email functionality.
+
+## Why This Project Exists
+
+This prototype is the starting point for a course project about improving the email experience.
+Instead of rebuilding a full email client, MailMind focuses on the part that matters for the project:
+the inbox interface itself.
+
+That makes it easier to test ideas around:
+
+- email organization
+- search and discovery
+- inbox interaction patterns
+- usability improvements
 
 ## Roadmap
 
-- Advanced filtering by sender, date, or tag
-- Customizable labels and categories
-- Better keyboard navigation
-- Bulk triage actions
-- Usability testing and iteration
+Possible next steps include:
+
+- advanced filtering by sender, date, or tag
+- customizable labels and categories
+- better keyboard navigation
+- bulk triage actions
+- AI-assisted organization concepts
+- usability testing and iteration
 
 ## Status
 
-This is a prototype with AI search enabled. It is not connected to a real mail provider and does not implement backend mail operations.
+This is an early prototype intended for UI exploration and course project development.
+It is not connected to a real mail provider and does not implement backend mail operations.
 
 ## License
 
