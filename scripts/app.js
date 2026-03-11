@@ -434,12 +434,15 @@ function renderReadingPane(mail) {
 
   // Star button visual state
   const starIcon = document.getElementById('starIcon');
+  const starBtn  = document.getElementById('btnStar');
   if (mail.starred) {
     starIcon.setAttribute('fill', '#ffd700');
     starIcon.querySelector('path').setAttribute('stroke', '#e6a800');
+    starBtn && starBtn.classList.add('starred');
   } else {
     starIcon.setAttribute('fill', 'none');
     starIcon.querySelector('path').setAttribute('stroke', 'currentColor');
+    starBtn && starBtn.classList.remove('starred');
   }
 
   // Highlight search terms in reading pane
