@@ -53,6 +53,12 @@
   --priority-high:   #c45c5c;
   --priority-medium: #c9943c;
   --priority-low:    #5a9b6e;
+
+  /* Misc tokens — fixes undefined variable references */
+  --bg-main:        #ffffff;
+  --star-color:     #f5a623;
+  --star-stroke:    #d4880a;
+  --icon-muted:     #b0b0b0;
 }
 
 /* ── Reset & Typography ── */
@@ -586,9 +592,9 @@ h1, h2, h3, h4, h5, h6 { font-family: var(--font-heading); }
   cursor: pointer;
   border-radius: var(--radius-md);
   background: #fff;
-  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: background 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
   border: 1px solid transparent;
-  animation: slideInUp 0.3s ease both;
+  animation: slideInUp 0.28s cubic-bezier(0.16, 1, 0.3, 1) both;
   opacity: 1;
 }
 /* Staggered entrance animation delays will be set via JS, default to 0 here */
@@ -673,6 +679,7 @@ h1, h2, h3, h4, h5, h6 { font-family: var(--font-heading); }
   color: var(--text-muted);
   display: -webkit-box;
   -webkit-line-clamp: 2;
+  line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
@@ -693,11 +700,12 @@ h1, h2, h3, h4, h5, h6 { font-family: var(--font-heading); }
   align-items: center;
   justify-content: center;
   padding: 80px 20px;
-  color: var(--text-muted);
-  gap: 16px;
-  animation: fadeIn 0.4s ease;
+  color: var(--icon-muted);
+  gap: 12px;
+  animation: fadeIn 0.35s cubic-bezier(0.16, 1, 0.3, 1);
 }
-.empty-state p { font-size: 14px; font-weight: 500; }
+.empty-state svg { opacity: 0.6; }
+.empty-state p { font-size: 14px; font-weight: 500; color: var(--text-muted); }
 
 /* ============================================================
    READING PANE
@@ -776,8 +784,13 @@ h1, h2, h3, h4, h5, h6 { font-family: var(--font-heading); }
   margin: 0 auto;
   width: 100%;
 }
-.reading-body-wrap::-webkit-scrollbar { width: 8px; }
-.reading-body-wrap::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.15); border-radius: 4px; }
+.reading-body-wrap::-webkit-scrollbar { width: 6px; }
+.reading-body-wrap::-webkit-scrollbar-thumb {
+  background: transparent;
+  border-radius: 3px;
+  transition: background 0.2s;
+}
+.reading-pane:hover .reading-body-wrap::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.15); }
 
 .reading-subject-row {
   display: flex;
