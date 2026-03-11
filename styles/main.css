@@ -53,6 +53,12 @@
   --priority-high:   #c45c5c;
   --priority-medium: #c9943c;
   --priority-low:    #5a9b6e;
+
+  /* Misc tokens — fixes undefined variable references */
+  --bg-main:        #ffffff;
+  --star-color:     #f5a623;
+  --star-stroke:    #d4880a;
+  --icon-muted:     #b0b0b0;
 }
 
 /* ── Reset & Typography ── */
@@ -75,12 +81,16 @@ h1, h2, h3, h4, h5, h6 { font-family: var(--font-heading); }
 
 /* ── Animations ── */
 @keyframes slideInUp {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 @keyframes fadeIn {
   from { opacity: 0; }
-  to { opacity: 1; }
+  to   { opacity: 1; }
+}
+@keyframes fadeInScale {
+  from { opacity: 0; transform: scale(0.98); }
+  to   { opacity: 1; transform: scale(1); }
 }
 
 /* ============================================================
@@ -115,7 +125,7 @@ h1, h2, h3, h4, h5, h6 { font-family: var(--font-heading); }
   align-items: center;
   justify-content: center;
   color: #fff;
-  transition: all 0.2s ease;
+  transition: background 0.15s ease, transform 0.15s ease;
 }
 .topbar-hamburger:hover { background: rgba(255,255,255,0.15); transform: scale(1.05); }
 
@@ -283,7 +293,7 @@ h1, h2, h3, h4, h5, h6 { font-family: var(--font-heading); }
   align-items: center;
   justify-content: center;
   color: rgba(255,255,255,0.9);
-  transition: all 0.2s ease;
+  transition: background 0.15s ease, transform 0.15s ease;
 }
 .topbar-icon-btn:hover { background: rgba(255,255,255,0.15); transform: scale(1.05); }
 
@@ -346,7 +356,7 @@ h1, h2, h3, h4, h5, h6 { font-family: var(--font-heading); }
   font-size: 14px;
   font-weight: 600;
   font-family: var(--font-heading);
-  transition: all 0.2s ease;
+  transition: background 0.2s ease, box-shadow 0.2s ease, transform 0.15s ease;
   white-space: nowrap;
   overflow: hidden;
   box-shadow: 0 4px 12px rgba(15, 108, 189, 0.25);
@@ -356,8 +366,8 @@ h1, h2, h3, h4, h5, h6 { font-family: var(--font-heading); }
   transform: translateY(-1px);
   box-shadow: 0 6px 16px rgba(15, 108, 189, 0.35);
 }
-.compose-btn:active { transform: translateY(1px); }
-.compose-btn svg { flex: none; transition: transform 0.2s; }
+.compose-btn:active { transform: translateY(0); box-shadow: 0 2px 8px rgba(15, 108, 189, 0.2); }
+.compose-btn svg { flex: none; transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1); }
 .compose-btn:hover svg { transform: rotate(90deg); }
 
 .sidebar.collapsed .compose-btn span,
@@ -405,7 +415,7 @@ h1, h2, h3, h4, h5, h6 { font-family: var(--font-heading); }
   color: var(--text-secondary);
   font-size: 14px;
   font-weight: 500;
-  transition: all 0.2s ease;
+  transition: background 0.15s ease, color 0.15s ease, box-shadow 0.15s ease, transform 0.1s ease;
   white-space: nowrap;
   position: relative;
 }
@@ -586,9 +596,9 @@ h1, h2, h3, h4, h5, h6 { font-family: var(--font-heading); }
   cursor: pointer;
   border-radius: var(--radius-md);
   background: #fff;
-  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: background 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
   border: 1px solid transparent;
-  animation: slideInUp 0.3s ease both;
+  animation: slideInUp 0.28s cubic-bezier(0.16, 1, 0.3, 1) both;
   opacity: 1;
 }
 /* Staggered entrance animation delays will be set via JS, default to 0 here */
@@ -673,6 +683,7 @@ h1, h2, h3, h4, h5, h6 { font-family: var(--font-heading); }
   color: var(--text-muted);
   display: -webkit-box;
   -webkit-line-clamp: 2;
+  line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
@@ -693,11 +704,12 @@ h1, h2, h3, h4, h5, h6 { font-family: var(--font-heading); }
   align-items: center;
   justify-content: center;
   padding: 80px 20px;
-  color: var(--text-muted);
-  gap: 16px;
-  animation: fadeIn 0.4s ease;
+  color: var(--icon-muted);
+  gap: 12px;
+  animation: fadeIn 0.35s cubic-bezier(0.16, 1, 0.3, 1);
 }
-.empty-state p { font-size: 14px; font-weight: 500; }
+.empty-state svg { opacity: 0.6; }
+.empty-state p { font-size: 14px; font-weight: 500; color: var(--text-muted); }
 
 /* ============================================================
    READING PANE
@@ -719,9 +731,10 @@ h1, h2, h3, h4, h5, h6 { font-family: var(--font-heading); }
   align-items: center;
   justify-content: center;
   gap: 16px;
-  color: var(--text-muted);
+  color: var(--icon-muted);
   background: var(--bg-app);
 }
+.reading-empty-icon { opacity: 0.55; }
 .reading-empty-title { font-family: var(--font-heading); font-size: 18px; font-weight: 600; color: var(--text-secondary); }
 .reading-empty-sub { font-size: 14px; color: var(--text-muted); }
 
@@ -747,7 +760,7 @@ h1, h2, h3, h4, h5, h6 { font-family: var(--font-heading); }
   font-size: 14px;
   font-weight: 500;
   color: var(--text-secondary);
-  transition: all 0.2s ease;
+  transition: background 0.15s ease, color 0.15s ease, transform 0.15s ease;
 }
 .reading-action-btn:hover { background: var(--bg-sidebar-hover); color: var(--text-primary); }
 .reading-action-btn span { white-space: nowrap; }
@@ -765,7 +778,6 @@ h1, h2, h3, h4, h5, h6 { font-family: var(--font-heading); }
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  animation: fadeIn 0.4s ease;
 }
 
 .reading-body-wrap {
@@ -776,8 +788,13 @@ h1, h2, h3, h4, h5, h6 { font-family: var(--font-heading); }
   margin: 0 auto;
   width: 100%;
 }
-.reading-body-wrap::-webkit-scrollbar { width: 8px; }
-.reading-body-wrap::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.15); border-radius: 4px; }
+.reading-body-wrap::-webkit-scrollbar { width: 6px; }
+.reading-body-wrap::-webkit-scrollbar-thumb {
+  background: transparent;
+  border-radius: 3px;
+  transition: background 0.2s;
+}
+.reading-pane:hover .reading-body-wrap::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.15); }
 
 .reading-subject-row {
   display: flex;
@@ -921,7 +938,7 @@ h1, h2, h3, h4, h5, h6 { font-family: var(--font-heading); }
 .reading-body {
   font-size: 15px;
   line-height: 1.8;
-  color: #333;
+  color: var(--text-primary);
 }
 .reading-body p { margin-bottom: 16px; }
 .reading-body p:last-child { margin-bottom: 0; }
@@ -1630,6 +1647,12 @@ h1, h2, h3, h4, h5, h6 { font-family: var(--font-heading); }
 /* ============================================================
    RESPONSIVE — narrow viewport
    ============================================================ */
+@media (max-width: 1100px) {
+  /* Hide toolbar button text labels on narrower viewports to prevent overflow */
+  .reading-action-btn span { display: none; }
+  .reading-action-btn { padding: 6px 10px; }
+}
+
 @media (max-width: 960px) {
   .reading-body-wrap { padding: 32px 40px; }
 }
@@ -1659,4 +1682,130 @@ h1, h2, h3, h4, h5, h6 { font-family: var(--font-heading); }
   :root { --list-width: 280px; }
   .reading-body-wrap { padding: 24px 20px; }
   .reading-subject { font-size: 24px; }
+}
+
+/* ============================================================
+   POLISH — :focus-visible, :active states, accessibility
+   ============================================================ */
+
+/* Global focus-visible outline — keyboard only */
+*:focus { outline: none; }
+*:focus-visible {
+  outline: 2px solid var(--ms-blue);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+
+/* On dark topbar, use white outline */
+.topbar *:focus-visible {
+  outline-color: rgba(255, 255, 255, 0.8);
+}
+
+/* Folder items — focused via keyboard */
+.folder-item:focus-visible,
+.folder-section-label--collapsible:focus-visible {
+  outline-offset: -2px;
+}
+
+/* Tab buttons */
+.tab-btn:focus-visible {
+  outline-offset: 3px;
+  border-radius: var(--radius-sm);
+}
+
+/* Modal form fields */
+.sf-input:focus-visible,
+.sf-textarea:focus-visible {
+  outline: none; /* handled via box-shadow already */
+}
+
+/* ── :active press feedback ── */
+.topbar-hamburger:active { background: rgba(255,255,255,0.25); transform: scale(0.96); }
+.topbar-icon-btn:active  { background: rgba(255,255,255,0.25); transform: scale(0.96); }
+.topbar-avatar:active    { transform: scale(0.96); }
+
+.folder-item:active { background: var(--bg-sidebar-hover); transform: scale(0.99); }
+
+.list-action-btn:active { background: var(--border-light); transform: scale(0.94); }
+
+.mail-item:active { transform: scale(0.995); }
+
+.reading-action-btn:active { 
+  background: var(--border-light);
+  transform: scale(0.97);
+}
+
+.sf-add-btn:active        { transform: scale(0.92); }
+.sf-modal-close:active    { transform: scale(0.92); }
+.sf-color-swatch:active   { transform: scale(1.05); }
+.sf-btn-cancel:active     { transform: scale(0.97); }
+.sf-btn-primary:active    { transform: translateY(1px) !important; }
+.sf-btn-danger:active     { transform: scale(0.97); }
+
+/* ── Reading pane — fade in on content switch ── */
+.reading-content {
+  animation: fadeInScale 0.22s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* ── Reading toolbar ── */
+.reading-action-btn--more { margin-left: auto; }
+
+/* Delete button — subtle danger tint on hover */
+#btnDelete:hover { color: #c92a2a; background: rgba(201, 42, 42, 0.07); }
+#btnDelete:active { background: rgba(201, 42, 42, 0.12); }
+
+/* Star button — gold state when starred */
+#btnStar.starred { color: #d4880a; }
+#btnStar.starred:hover { background: rgba(212, 136, 10, 0.1); }
+#btnStar:hover { color: #d4880a; }
+
+/* ── Tag chips — subtle hover lift ── */
+.tag-chip {
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  cursor: default;
+}
+.tag-chip:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+}
+
+/* ── Search clear button — scale on enter ── */
+.search-clear { transition: background 0.15s ease, color 0.15s ease, transform 0.15s ease, opacity 0.15s ease; }
+
+/* ── Attachment chip — tighter active ── */
+.attachment-chip:active { transform: translateY(0); box-shadow: var(--shadow-sm); }
+
+/* ── Storage bar — animated fill ── */
+.storage-fill {
+  transition: width 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* ── Improved scrollbar for sidebar nav ── */
+.sidebar-nav::-webkit-scrollbar { width: 4px; }
+.sidebar-nav::-webkit-scrollbar-track { background: transparent; }
+.sidebar-nav::-webkit-scrollbar-thumb {
+  background: transparent;
+  border-radius: 2px;
+  transition: background 0.2s;
+}
+.sidebar:hover .sidebar-nav::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.12); }
+
+/* ── AI answer panel entrance ── */
+.ai-answer-panel { animation: slideInUp 0.2s cubic-bezier(0.16, 1, 0.3, 1); }
+
+/* ============================================================
+   REDUCED MOTION — respect user preference
+   ============================================================ */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  .mail-item { animation: none; }
+  .reading-content { animation: none; }
+  .sf-modal-content { transition: none; }
+  .search-ai-dot { animation: none; }
 }
