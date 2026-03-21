@@ -25,6 +25,7 @@ const state = {
   aiResults:      [],           // [{ mail, score|reason }, ...] AI 搜索结果集
   aiAnswer:       '',           // LLM 对用户查询的直接自然语言回答
   aiSearchType:   'none',       // 'none' | 'llm' | 'vector' | 'keyword'
+  selectedAutomationId: null,   // 当前查看的 automation id
 };
 
 /* ──────────────────────────────────────────────────────────────
@@ -110,6 +111,16 @@ function isSmartFolder(folderKey) {
 /** 从 folder key 提取智能文件夹 ID */
 function smartFolderIdFromKey(folderKey) {
   return folderKey.replace(/^sf-/, '');
+}
+
+/** 判断是否为自动化视图（folder key 以 "auto-" 开头） */
+function isAutomationView(folderKey) {
+  return typeof folderKey === 'string' && folderKey.startsWith('auto-');
+}
+
+/** 从 folder key 提取 automation id */
+function automationIdFromKey(folderKey) {
+  return folderKey.replace(/^auto-/, '');
 }
 
 /**
@@ -486,6 +497,34 @@ function renderBadges() {
 function selectFolder(folderName) {
   state.activeFolder   = folderName;
   state.selectedMailId = null;
+
+  // 切换至普通文件夹时，恢复邮件列表面板，隐藏自动化详情
+  const mailListPanel    = document.getElementById('mailListPanel');
+  const readingAutomation = document.getElementById('readingAutomation');
+
+  if (isAutomationView(folderName)) {
+    // 显示自动化详情，隐藏邮件列表
+    if (mailListPanel)    mailListPanel.style.display    = 'none';
+    if (readingAutomation) readingAutomation.style.display = 'flex';
+    document.getElementById('readingContent').style.display = 'none';
+    document.getElementById('readingEmpty').style.display   = 'none';
+
+    const autoId = automationIdFromKey(folderName);
+    state.selectedAutomationId = autoId;
+
+    // Update sidebar active item
+    document.querySelectorAll('.folder-item').forEach(el => {
+      el.classList.toggle('active', el.dataset.folder === folderName);
+    });
+
+    renderAutomationDetail(autoId);
+    return;
+  }
+
+  // 离开自动化视图时恢复
+  if (mailListPanel)    mailListPanel.style.display    = '';
+  if (readingAutomation) readingAutomation.style.display = 'none';
+  state.selectedAutomationId = null;
 
   // Update sidebar active item
   document.querySelectorAll('.folder-item').forEach(el => {
@@ -904,7 +943,299 @@ function handleDeleteSmartFolder() {
 }
 
 /* ──────────────────────────────────────────────────────────────
-   SECTION 11: EVENT LISTENERS
+   SECTION 11: AUTOMATIONS — SIDEBAR + DETAIL + MODAL
+   ────────────────────────────────────────────────────────────── */
+
+/**
+ * 渲染 Automations 侧边栏列表项
+ * 每次创建/删除/更新自动化后调用，init() 时也调用一次
+ */
+function renderAutomationSidebar() {
+  const folderList = document.getElementById('folderList');
+  const emptyHint  = document.getElementById('autoEmptyHint');
+  if (!folderList) return;
+
+  // 移除上次渲染的所有 automation <li> 项
+  folderList.querySelectorAll('.auto-folder-item').forEach(el => el.remove());
+
+  const automations = typeof loadAutomations === 'function' ? loadAutomations() : [];
+
+  if (emptyHint) {
+    emptyHint.style.display = automations.length ? 'none' : 'list-item';
+  }
+
+  const insertBefore = emptyHint || null;
+
+  automations.forEach(function(auto) {
+    const folderKey = 'auto-' + auto.id;
+    const li = document.createElement('li');
+    li.className = 'folder-item auto-folder-item auto-section-item';
+    li.dataset.folder = folderKey;
+    li.innerHTML =
+      '<span class="auto-status-dot' + (auto.enabled ? '' : ' disabled') + '"></span>' +
+      '<span class="folder-label">' + escapeHtml(auto.name) + '</span>' +
+      '<button class="auto-edit-btn" data-auto-id="' + escapeHtml(auto.id) + '" title="Edit automation" aria-label="Edit automation">' +
+        '<svg width="12" height="12" viewBox="0 0 16 16" fill="none">' +
+          '<path d="M11.5 2.5l2 2L5 13H3v-2L11.5 2.5z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/>' +
+        '</svg>' +
+      '</button>';
+
+    if (state.activeFolder === folderKey) li.classList.add('active');
+
+    li.addEventListener('click', function(e) {
+      if (e.target.closest('.auto-edit-btn')) return;
+      selectFolder(folderKey);
+    });
+
+    li.querySelector('.auto-edit-btn').addEventListener('click', function(e) {
+      e.stopPropagation();
+      openAutomationModal('edit', auto);
+    });
+
+    if (insertBefore) {
+      folderList.insertBefore(li, insertBefore);
+    } else {
+      folderList.appendChild(li);
+    }
+  });
+}
+
+/**
+ * 渲染 pipeline 步骤卡片到指定容器
+ * direction: 'horizontal'（读邮件面板）或 'vertical'（modal 预览）
+ */
+var AUTO_TYPE_LABELS = { trigger: '触发器', filter: '处理', action: '动作' };
+
+function renderPipelineSteps(steps, containerSelector) {
+  var container = typeof containerSelector === 'string'
+    ? document.querySelector(containerSelector)
+    : containerSelector;
+  if (!container) return;
+  container.innerHTML = '';
+
+  steps.forEach(function(step, idx) {
+    var card = document.createElement('div');
+    card.className = 'auto-step-card auto-step-card--' + step.type;
+    card.style.animationDelay = (idx * 60) + 'ms';
+    var typeLabel = AUTO_TYPE_LABELS[step.type] || step.type;
+    card.innerHTML =
+      '<span class="auto-step-num">' + (idx + 1) + '</span>' +
+      '<div class="auto-step-icon-wrap">' + step.icon + '</div>' +
+      '<span class="auto-step-type-label auto-step-type-label--' + step.type + '">' + escapeHtml(typeLabel) + '</span>' +
+      '<span class="auto-step-title">' + escapeHtml(step.title) + '</span>' +
+      '<span class="auto-step-desc">' + escapeHtml(step.description) + '</span>';
+    container.appendChild(card);
+
+    if (idx < steps.length - 1) {
+      var arrow = document.createElement('div');
+      arrow.className = 'auto-step-arrow';
+      arrow.innerHTML =
+        '<svg width="16" height="16" viewBox="0 0 16 16" fill="none">' +
+          '<path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>' +
+        '</svg>';
+      container.appendChild(arrow);
+    }
+  });
+}
+
+/**
+ * 渲染 Automation 详情到阅读面板
+ */
+function renderAutomationDetail(autoId) {
+  var auto = typeof getAutomationById === 'function' ? getAutomationById(autoId) : null;
+  if (!auto) return;
+
+  document.getElementById('autoDetailName').textContent        = auto.name;
+  document.getElementById('autoDetailDescription').textContent = auto.description || '';
+  document.getElementById('autoDetailToggle').checked          = auto.enabled;
+  document.getElementById('autoDetailStatus').textContent      = auto.enabled ? '已启用' : '已停用';
+
+  var created = new Date(auto.createdAt);
+  document.getElementById('autoDetailCreated').textContent =
+    '创建于 ' + created.toLocaleDateString('zh-CN', { month: 'long', day: 'numeric', year: 'numeric' });
+
+  renderPipelineSteps(auto.steps, '#autoDetailSteps');
+}
+
+/* ── Automation Modal 状态 ── */
+var _autoModalMode  = 'create'; // 'create' | 'edit'
+var _autoEditId     = null;
+var _autoPendingKey  = null;   // mock AI 选定的 template key
+var _autoPendingName = '';     // mock AI 建议的名称
+var _autoPendingDesc = '';     // 用户输入的描述文字
+
+function openAutomationModal(mode, automation) {
+  mode = mode || 'create';
+  automation = automation || null;
+
+  var modal    = document.getElementById('autoModal');
+  var titleEl  = document.getElementById('autoModalTitle');
+  var saveBtn  = document.getElementById('autoModalSave');
+  var messages = document.getElementById('autoChatMessages');
+  var input    = document.getElementById('autoChatInput');
+  var preview  = document.getElementById('autoPreviewSteps');
+  var empty    = document.getElementById('autoPreviewEmpty');
+  if (!modal) return;
+
+  _autoModalMode  = mode;
+  _autoEditId     = automation ? automation.id : null;
+  _autoPendingKey  = automation ? automation.templateKey : null;
+  _autoPendingName = automation ? automation.name : '';
+  _autoPendingDesc = automation ? (automation.description || '') : '';
+
+  // 清空聊天区域
+  if (messages) messages.innerHTML = '';
+  if (input)    input.value = '';
+  if (saveBtn)  saveBtn.disabled = (mode === 'create');
+  var sendBtnEl = document.getElementById('autoChatSend');
+  if (sendBtnEl) sendBtnEl.disabled = true;
+
+  titleEl.textContent = mode === 'edit' ? '编辑自动化' : '新建自动化';
+
+  // 注入欢迎 AI 气泡
+  var welcome = mode === 'edit' && automation
+    ? '你正在编辑 "<strong>' + escapeHtml(automation.name) + '</strong>"。描述需要修改的地方，或直接点击保存。'
+    : '你好！描述一下你希望这个自动化流程做什么。<br><br>例如：<em>"帮我总结长邮件"</em> 或 <em>"当收到紧急邮件时提醒我"</em>。';
+  appendChatBubble('ai', welcome);
+
+  // 编辑模式：立即展示已有 pipeline
+  if (mode === 'edit' && automation) {
+    if (preview) preview.style.display = 'flex';
+    if (empty)   empty.style.display   = 'none';
+    renderPipelineSteps(automation.steps, '#autoPreviewSteps');
+  } else {
+    if (preview) preview.style.display = 'none';
+    if (empty)   empty.style.display   = 'flex';
+  }
+
+  modal.hidden = false;
+  requestAnimationFrame(function() { modal.classList.add('visible'); });
+  if (input) input.focus();
+}
+
+function closeAutomationModal() {
+  var modal = document.getElementById('autoModal');
+  if (!modal) return;
+  modal.classList.remove('visible');
+  setTimeout(function() { modal.hidden = true; }, 200);
+}
+
+function renderMarkdown(text) {
+  // Convert **bold** → <strong>, *italic* → <em>, keep existing HTML tags
+  return text
+    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+    .replace(/\*(?!\*)(.+?)\*(?!\*)/g, '<em>$1</em>');
+}
+
+function appendChatBubble(role, html) {
+  var messages = document.getElementById('autoChatMessages');
+  if (!messages) return;
+  var bubble = document.createElement('div');
+  bubble.className = 'auto-chat-bubble auto-chat-bubble--' + role;
+  bubble.innerHTML = renderMarkdown(html);
+  messages.appendChild(bubble);
+  messages.scrollTop = messages.scrollHeight;
+}
+
+async function handleAutomationSend() {
+  var input    = document.getElementById('autoChatInput');
+  var sendBtn  = document.getElementById('autoChatSend');
+  var typing   = document.getElementById('autoChatTyping');
+  var preview  = document.getElementById('autoPreviewSteps');
+  var empty    = document.getElementById('autoPreviewEmpty');
+  var saveBtn  = document.getElementById('autoModalSave');
+  if (!input) return;
+
+  var text = input.value.trim();
+  if (!text) return;
+
+  // 显示用户气泡
+  appendChatBubble('user', escapeHtml(text));
+  input.value = '';
+  if (sendBtn) sendBtn.disabled = true;
+
+  // 显示 typing 指示器
+  if (typing) typing.style.display = 'flex';
+  var messagesEl = document.getElementById('autoChatMessages');
+  if (messagesEl) messagesEl.scrollTop = messagesEl.scrollHeight;
+
+  try {
+    var result = await mockAiProcess(text);
+    _autoPendingKey  = result.templateKey;
+    _autoPendingName = result.suggestedName;
+    _autoPendingDesc = text;
+
+    // 隐藏 typing，显示 AI 回复
+    if (typing) typing.style.display = 'none';
+    appendChatBubble('ai', result.template.aiReply);
+
+    // 展示 pipeline 预览
+    if (preview) preview.style.display = 'flex';
+    if (empty)   empty.style.display   = 'none';
+    renderPipelineSteps(result.template.steps, '#autoPreviewSteps');
+
+    // 启用保存按钮
+    if (saveBtn) saveBtn.disabled = false;
+  } catch (err) {
+    if (typing) typing.style.display = 'none';
+    appendChatBubble('ai', '抱歉，出了点问题，请重新描述一下。');
+  }
+
+  if (sendBtn) sendBtn.disabled = false;
+}
+
+function handleSaveAutomation() {
+  if (!_autoPendingKey && _autoModalMode === 'create') return;
+
+  var name = _autoPendingName || (
+    _autoModalMode === 'edit' && _autoEditId
+      ? (getAutomationById(_autoEditId) || {}).name || 'My Automation'
+      : 'My Automation'
+  );
+
+  if (_autoModalMode === 'edit' && _autoEditId) {
+    var template = AUTOMATION_TEMPLATES[_autoPendingKey];
+    var patch = { name: name };
+    if (template) {
+      patch.templateKey = template.key;
+      patch.steps = template.steps;
+    }
+    var updated = updateAutomation(_autoEditId, patch);
+    // 若当前正在查看该 automation，刷新详情
+    if (state.selectedAutomationId === _autoEditId && updated) {
+      renderAutomationDetail(_autoEditId);
+    }
+  } else {
+    createAutomation({
+      name: name,
+      description: _autoPendingDesc,
+      templateKey: _autoPendingKey || 'default',
+    });
+  }
+
+  closeAutomationModal();
+  renderAutomationSidebar();
+}
+
+function handleDeleteAutomation() {
+  var autoId = _autoEditId || state.selectedAutomationId;
+  if (!autoId) return;
+  var auto = getAutomationById(autoId);
+  var label = auto ? auto.name : 'this automation';
+  if (!confirm('Delete "' + label + '"? This cannot be undone.')) return;
+
+  deleteAutomation(autoId);
+  closeAutomationModal();
+
+  // 若当前正在查看该 automation，跳回收件箱
+  if (state.activeFolder === 'auto-' + autoId) {
+    selectFolder('inbox');
+  }
+  renderAutomationSidebar();
+}
+
+/* ──────────────────────────────────────────────────────────────
+   SECTION 12: EVENT LISTENERS
    ────────────────────────────────────────────────────────────── */
 
 function escapeHtml(str) {
@@ -919,7 +1250,9 @@ function init() {
   /* Folder navigation（智能文件夹项已在 renderSmartFolderSidebar 内单独绑定） */
   document.getElementById('folderList').addEventListener('click', e => {
     const item = e.target.closest('.folder-item');
-    if (item && item.dataset.folder && !item.classList.contains('sf-folder-item')) {
+    if (item && item.dataset.folder &&
+        !item.classList.contains('sf-folder-item') &&
+        !item.classList.contains('auto-folder-item')) {
       selectFolder(item.dataset.folder);
     }
   });
@@ -1052,8 +1385,88 @@ function init() {
     }
   });
 
+  /* Automations 区块折叠/展开 */
+  var autoSectionLabel = document.getElementById('autoSectionLabel');
+  if (autoSectionLabel) {
+    autoSectionLabel.addEventListener('click', function(e) {
+      if (e.target.closest('.sf-add-btn')) return;
+      var expanded = autoSectionLabel.getAttribute('aria-expanded') === 'true';
+      autoSectionLabel.setAttribute('aria-expanded', String(!expanded));
+      document.querySelectorAll('.auto-section-item').forEach(function(el) {
+        el.classList.toggle('collapsed', expanded);
+      });
+    });
+  }
+
+  /* 创建自动化按钮 */
+  var createAutoBtn = document.getElementById('createAutomationBtn');
+  if (createAutoBtn) {
+    createAutoBtn.addEventListener('click', function(e) {
+      e.stopPropagation();
+      openAutomationModal('create');
+    });
+  }
+
+  /* Automation Modal — 关闭/取消 */
+  document.getElementById('autoModalClose')?.addEventListener('click', closeAutomationModal);
+  document.getElementById('autoModalBackdrop')?.addEventListener('click', closeAutomationModal);
+  document.getElementById('autoModalCancel')?.addEventListener('click', closeAutomationModal);
+
+  /* Automation Modal — 输入时更新发送按钮状态 */
+  var _autoChatInputEl = document.getElementById('autoChatInput');
+  var _autoChatSendEl  = document.getElementById('autoChatSend');
+  if (_autoChatInputEl && _autoChatSendEl) {
+    _autoChatSendEl.disabled = true;
+    _autoChatInputEl.addEventListener('input', function() {
+      _autoChatSendEl.disabled = !_autoChatInputEl.value.trim();
+    });
+  }
+
+  /* Automation Modal — 发送 */
+  document.getElementById('autoChatSend')?.addEventListener('click', handleAutomationSend);
+  document.getElementById('autoChatInput')?.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      handleAutomationSend();
+    }
+  });
+
+  /* Automation Modal — 保存 */
+  document.getElementById('autoModalSave')?.addEventListener('click', handleSaveAutomation);
+
+  /* Automation Modal — Escape 关闭 */
+  document.getElementById('autoModal')?.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') closeAutomationModal();
+  });
+
+  /* Automation 详情 — 启用/禁用切换 */
+  document.getElementById('autoDetailToggle')?.addEventListener('change', function() {
+    if (!state.selectedAutomationId) return;
+    var enabled = this.checked;
+    updateAutomation(state.selectedAutomationId, { enabled: enabled });
+    document.getElementById('autoDetailStatus').textContent = enabled ? 'Enabled' : 'Disabled';
+    // 更新侧边栏状态点颜色
+    var dot = document.querySelector('[data-folder="auto-' + state.selectedAutomationId + '"] .auto-status-dot');
+    if (dot) dot.classList.toggle('disabled', !enabled);
+  });
+
+  /* Automation 详情 — 编辑 */
+  document.getElementById('btnAutoEdit')?.addEventListener('click', function() {
+    if (!state.selectedAutomationId) return;
+    var auto = getAutomationById(state.selectedAutomationId);
+    if (auto) openAutomationModal('edit', auto);
+  });
+
+  /* Automation 详情 — 删除 */
+  document.getElementById('btnAutoDelete')?.addEventListener('click', function() {
+    if (!state.selectedAutomationId) return;
+    _autoEditId = state.selectedAutomationId;
+    handleDeleteAutomation();
+  });
+
   /* Initial render */
   renderSmartFolderSidebar();
+  renderAutomationSidebar();
   renderBadges();
   renderMailList();
   renderReadingPane(null);

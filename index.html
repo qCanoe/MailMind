@@ -212,6 +212,30 @@
           <li class="sf-empty-hint sf-section-item" id="sfEmptyHint">
             <span>Click + to create a smart folder</span>
           </li>
+
+          <!-- ── Automations ── -->
+          <li class="folder-divider"></li>
+          <li class="folder-section-label folder-section-label--collapsible"
+              id="autoSectionLabel"
+              aria-expanded="true">
+            <svg class="ai-section-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
+            </svg>
+            <span class="folder-label">Automations</span>
+            <button class="sf-add-btn" id="createAutomationBtn" title="New automation" aria-label="New automation">
+              <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+                <line x1="6" y1="1" x2="6" y2="11" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                <line x1="1" y1="6" x2="11" y2="6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+              </svg>
+            </button>
+            <svg class="ai-section-chevron" width="12" height="12" viewBox="0 0 12 12" fill="none">
+              <path d="M2 4l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </li>
+          <!-- Automation items rendered by app.js -->
+          <li class="auto-empty-hint auto-section-item" id="autoEmptyHint">
+            <span>点击 + 创建自动化流程</span>
+          </li>
         </ul>
       </nav>
 
@@ -376,6 +400,52 @@
           <div class="reading-body" id="readingBody"></div>
         </div>
       </div>
+      <!-- Automation detail view (hidden until an automation is selected) -->
+      <div class="reading-automation" id="readingAutomation" style="display:none">
+        <div class="auto-detail-header">
+          <div class="auto-detail-title-row">
+            <div class="auto-detail-icon">⚡</div>
+            <h1 class="auto-detail-name" id="autoDetailName"></h1>
+            <div class="auto-detail-controls">
+              <label class="auto-toggle-label" title="Enable / Disable">
+                <input type="checkbox" id="autoDetailToggle" class="auto-toggle-input"/>
+                <span class="auto-toggle-track">
+                  <span class="auto-toggle-thumb"></span>
+                </span>
+              </label>
+              <span class="auto-toggle-status" id="autoDetailStatus">Enabled</span>
+            </div>
+          </div>
+          <p class="auto-detail-description" id="autoDetailDescription"></p>
+          <div class="auto-detail-meta">
+            <span id="autoDetailCreated"></span>
+            <span class="auto-detail-meta-sep">·</span>
+            <span id="autoDetailLastRun">从未触发</span>
+          </div>
+          <div class="auto-detail-actions">
+            <button class="reading-action-btn" id="btnAutoEdit">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                <path d="M11.5 2.5l2 2L5 13H3v-2L11.5 2.5z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/>
+              </svg>
+              <span>编辑</span>
+            </button>
+            <button class="reading-action-btn reading-action-btn--danger" id="btnAutoDelete">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                <path d="M6 3h4l.5 1H14v1H2V4h3.5L6 3z" stroke="currentColor" stroke-width="1.3"/>
+                <rect x="3" y="5" width="10" height="9" rx="1" stroke="currentColor" stroke-width="1.3"/>
+              </svg>
+              <span>删除</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="auto-pipeline-section">
+          <h3 class="auto-pipeline-title">流程节点</h3>
+          <div class="auto-pipeline-steps" id="autoDetailSteps">
+            <!-- Step cards injected by app.js -->
+          </div>
+        </div>
+      </div>
     </main>
 
   </div><!-- /.layout -->
@@ -443,12 +513,88 @@
     </div>
   </div>
 
+  <!-- ========== Automation Chat Modal ========== -->
+  <div class="auto-modal" id="autoModal" hidden
+       aria-modal="true" role="dialog" aria-labelledby="autoModalTitle">
+    <div class="auto-modal-backdrop" id="autoModalBackdrop"></div>
+    <div class="auto-modal-content">
+
+      <!-- Header -->
+      <div class="auto-modal-header">
+        <div class="auto-modal-header-left">
+          <span class="auto-modal-icon">⚡</span>
+          <h3 class="auto-modal-title" id="autoModalTitle">New Automation</h3>
+        </div>
+        <button class="sf-modal-close" id="autoModalClose" aria-label="Close">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+            <line x1="1" y1="1" x2="13" y2="13" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+            <line x1="13" y1="1" x2="1" y2="13" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+          </svg>
+        </button>
+      </div>
+
+      <!-- Split body: chat left, pipeline preview right -->
+      <div class="auto-modal-body">
+
+        <!-- Left: Chat Panel -->
+        <div class="auto-chat-panel">
+          <div class="auto-chat-messages" id="autoChatMessages"></div>
+          <div class="auto-chat-typing" id="autoChatTyping" style="display:none">
+            <span class="auto-typing-dot"></span>
+            <span class="auto-typing-dot"></span>
+            <span class="auto-typing-dot"></span>
+          </div>
+          <div class="auto-chat-input-row">
+            <textarea
+              id="autoChatInput"
+              class="auto-chat-input"
+              placeholder="描述你想要的自动化功能… (Enter 发送)"
+              rows="2"
+              maxlength="400"
+            ></textarea>
+            <button class="auto-chat-send" id="autoChatSend" aria-label="Send">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                <path d="M2 8l12-6-4 6 4 6L2 8z" fill="currentColor"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- Right: Pipeline Preview Panel -->
+        <div class="auto-preview-panel" id="autoPreviewPanel">
+          <div class="auto-preview-header">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
+            </svg>
+            <span>流程预览</span>
+          </div>
+          <div class="auto-preview-empty" id="autoPreviewEmpty">
+            <svg class="auto-preview-empty-icon" width="40" height="40" viewBox="0 0 40 40" fill="none">
+              <rect x="6" y="6" width="28" height="20" rx="3" stroke="currentColor" stroke-width="1.6"/>
+              <path d="M6 13l14 8 14-8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+              <path d="M20 34v-8M16 30l4 4 4-4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            <p>描述你的自动化流程<br>即可在此预览 Pipeline</p>
+          </div>
+          <div class="auto-preview-steps" id="autoPreviewSteps" style="display:none"></div>
+        </div>
+      </div>
+
+      <!-- Footer -->
+      <div class="auto-modal-footer">
+        <button class="sf-btn-cancel" id="autoModalCancel">取消</button>
+        <button class="sf-btn-primary" id="autoModalSave" disabled>保存自动化</button>
+      </div>
+    </div>
+  </div>
+
   <script src="scripts/config.js"></script>
   <script src="scripts/mail-data.js"></script>
   <script src="scripts/ai-priority.js"></script>
   <script src="scripts/smart-folders.js"></script>
   <script src="scripts/embeddings.js" onerror="console.warn('[MailMind AI] embeddings.js 未找到，将在首次搜索时实时生成向量。')"></script>
   <script src="scripts/ai-search.js"></script>
+  <script src="scripts/automations.js"></script>
   <script src="scripts/app.js"></script>
 </body>
 </html>
