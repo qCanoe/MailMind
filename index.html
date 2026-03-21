@@ -155,7 +155,10 @@
           <li class="folder-divider"></li>
           <li class="folder-section-label folder-section-label--collapsible"
               id="aiSectionLabel"
-              aria-expanded="true">
+              aria-expanded="true"
+              tabindex="0"
+              role="button"
+              aria-label="展开/收起 Smart Priority">
             <svg class="ai-section-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <path d="M12 2L2 7l10 5 10-5-10-5z"/>
               <path d="M2 17l10 5 10-5"/>
@@ -186,7 +189,10 @@
           <li class="folder-divider"></li>
           <li class="folder-section-label folder-section-label--collapsible"
               id="sfSectionLabel"
-              aria-expanded="true">
+              aria-expanded="true"
+              tabindex="0"
+              role="button"
+              aria-label="展开/收起 Smart Folders">
             <svg class="ai-section-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z"/>
               <line x1="7" y1="7" x2="7.01" y2="7"/>
@@ -290,8 +296,8 @@
         </ul>
         <div class="empty-state" id="emptyState" style="display:none">
           <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
-            <rect x="8" y="12" width="32" height="24" rx="2" stroke="#aaa" stroke-width="1.8"/>
-            <path d="M8 17l16 10 16-10" stroke="#aaa" stroke-width="1.8"/>
+            <rect x="8" y="12" width="32" height="24" rx="2" stroke="currentColor" stroke-width="1.8"/>
+            <path d="M8 17l16 10 16-10" stroke="currentColor" stroke-width="1.8"/>
           </svg>
           <p>没有符合条件的邮件</p>
         </div>
@@ -302,9 +308,9 @@
     <main class="reading-pane" id="readingPane">
       <!-- Welcome / no-selection state -->
       <div class="reading-empty" id="readingEmpty">
-        <svg width="64" height="64" viewBox="0 0 64 64" fill="none">
-          <rect x="8" y="16" width="48" height="32" rx="3" stroke="#c8c8c8" stroke-width="2"/>
-          <path d="M8 24l24 14 24-14" stroke="#c8c8c8" stroke-width="2"/>
+        <svg width="64" height="64" viewBox="0 0 64 64" fill="none" class="reading-empty-icon">
+          <rect x="8" y="16" width="48" height="32" rx="3" stroke="currentColor" stroke-width="2"/>
+          <path d="M8 24l24 14 24-14" stroke="currentColor" stroke-width="2"/>
         </svg>
         <p class="reading-empty-title">选择一封邮件以查看</p>
         <p class="reading-empty-sub">点击左侧列表中的任意邮件</p>

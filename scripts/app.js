@@ -445,12 +445,15 @@ function renderReadingPane(mail) {
 
   // Star button visual state
   const starIcon = document.getElementById('starIcon');
+  const starBtn  = document.getElementById('btnStar');
   if (mail.starred) {
     starIcon.setAttribute('fill', '#ffd700');
     starIcon.querySelector('path').setAttribute('stroke', '#e6a800');
+    starBtn && starBtn.classList.add('starred');
   } else {
     starIcon.setAttribute('fill', 'none');
     starIcon.querySelector('path').setAttribute('stroke', 'currentColor');
+    starBtn && starBtn.classList.remove('starred');
   }
 
   // Highlight search terms in reading pane
@@ -1262,26 +1265,33 @@ function init() {
   /* Smart Priority 折叠/展开 */
   const aiSectionLabel = document.getElementById('aiSectionLabel');
   if (aiSectionLabel) {
-    aiSectionLabel.addEventListener('click', () => {
+    const toggleAiSection = () => {
       const expanded = aiSectionLabel.getAttribute('aria-expanded') === 'true';
       aiSectionLabel.setAttribute('aria-expanded', String(!expanded));
       document.querySelectorAll('.ai-priority-item').forEach(el => {
         el.classList.toggle('collapsed', expanded);
       });
+    };
+    aiSectionLabel.addEventListener('click', toggleAiSection);
+    aiSectionLabel.addEventListener('keydown', e => {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggleAiSection(); }
     });
   }
 
   /* 智能文件夹区块折叠/展开 */
   const sfSectionLabel = document.getElementById('sfSectionLabel');
   if (sfSectionLabel) {
-    sfSectionLabel.addEventListener('click', e => {
-      // 点击 + 按钮不折叠
-      if (e.target.closest('.sf-add-btn')) return;
+    const toggleSfSection = e => {
+      if (e.target && e.target.closest('.sf-add-btn')) return;
       const expanded = sfSectionLabel.getAttribute('aria-expanded') === 'true';
       sfSectionLabel.setAttribute('aria-expanded', String(!expanded));
       document.querySelectorAll('.sf-section-item').forEach(el => {
         el.classList.toggle('collapsed', expanded);
       });
+    };
+    sfSectionLabel.addEventListener('click', toggleSfSection);
+    sfSectionLabel.addEventListener('keydown', e => {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggleSfSection(e); }
     });
   }
 
