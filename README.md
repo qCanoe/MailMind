@@ -1,7 +1,7 @@
 # MailMind
 
 MailMind is a front-end email prototype inspired by Microsoft Outlook Web.
-It is designed as the foundation for a course project focused on improving the email experience through better organization, lightweight search, and interaction design, without implementing real sending or receiving workflows.
+It is designed as the foundation for a course project focused on improving the email experience through better organization, lightweight search, **AutoPipeline** (natural-language automation workflows with a visual step-by-step pipeline in the reading pane), and interaction design, without implementing real sending or receiving workflows.
 
 ## Overview
 
@@ -10,6 +10,7 @@ The goal is to recreate a familiar Outlook-style interface with AI-assisted orga
 
 - Smart Priority and Smart Folders for automatic mail triage
 - Semantic and LLM-powered search
+- **AutoPipeline** — describe automations in plain language, preview and manage linear workflows (trigger → process → actions) with per-step summaries in the detail view
 - Improved mail triage interactions
 
 ## Current Features
@@ -24,7 +25,7 @@ The goal is to recreate a familiar Outlook-style interface with AI-assisted orga
 - **Smart Priority** — AI-powered inbox triage (high / medium / low)
 - **Smart Folders** — Create custom folders with name + description; AI classifies emails automatically (LLM or local keyword fallback)
 - **AI Search** — Semantic search with LLM understanding, vector similarity, or keyword fallback
-- **Automations** — Describe a workflow in natural language (mock “AI” picks a template); automations are stored in `localStorage`. Each automation has a reading-pane detail view with a horizontal pipeline: step type (trigger / process / action), title, description, and **per-step configuration summaries**. The header shows **total run count** (formatted with `Intl`) and **last triggered** time when set; invalid or missing dates degrade to safe placeholder text.
+- **Automations / AutoPipeline** — Describe a workflow in natural language (mock “AI” picks a template); automations are stored in `localStorage`. Each automation has a reading-pane detail view with a horizontal pipeline: step type (trigger / process / action), title, description, and **per-step configuration summaries**. The header shows **total run count** (formatted with `Intl`) and **last triggered** time when set; invalid or missing dates degrade to safe placeholder text.
 - Mock data for inbox, drafts, sent, junk, archive, and deleted
 
 ## Tech Stack
