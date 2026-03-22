@@ -19,3 +19,5 @@ scripts/config.js
 scripts/embeddings.js
 
 mvp.md
+
+.cursor/
