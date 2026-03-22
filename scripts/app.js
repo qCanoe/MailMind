@@ -1006,6 +1006,29 @@ function renderAutomationSidebar() {
  */
 var AUTO_TYPE_LABELS = { trigger: '触发器', filter: '处理', action: '动作' };
 
+function isValidAutomationDate(d) {
+  return d instanceof Date && !isNaN(d.getTime());
+}
+
+/** Tooltip / title 属性长度上限，避免极长文本拖垮布局与无障碍 */
+function truncateForTooltip(str, maxLen) {
+  maxLen = maxLen || 480;
+  var s = String(str);
+  if (s.length <= maxLen) return s;
+  return s.slice(0, maxLen - 1) + '…';
+}
+
+function normalizeRunCount(raw) {
+  var n = Number(raw);
+  if (!isFinite(n) || n < 0) return 0;
+  if (n > 1e15) return 1e15;
+  return Math.floor(n);
+}
+
+function formatRunCountLabelZh(n) {
+  return '累计触发 ' + new Intl.NumberFormat('zh-CN').format(n) + ' 次';
+}
+
 /**
  * @param {object} [options]
  * @param {'detail'|'preview'} [options.variant='preview'] — detail 显示每步 summaryLines
@@ -1020,14 +1043,25 @@ function renderPipelineSteps(steps, containerSelector, options) {
     ? document.querySelector(containerSelector)
     : containerSelector;
   if (!container) return;
-  container.innerHTML = '';
   container.classList.toggle('auto-pipeline-steps--detail', variant === 'detail');
 
+  if (!steps || !Array.isArray(steps) || steps.length === 0) {
+    container.innerHTML = '<p class="auto-pipeline-empty" role="status">暂无流程步骤</p>';
+    return;
+  }
+
+  container.innerHTML = '';
+
   steps.forEach(function(step, idx) {
+    step = step || {};
+    var stepType = step.type;
+    if (stepType !== 'trigger' && stepType !== 'filter' && stepType !== 'action') {
+      stepType = 'action';
+    }
     var card = document.createElement('div');
-    card.className = 'auto-step-card auto-step-card--' + step.type;
+    card.className = 'auto-step-card auto-step-card--' + stepType;
     card.style.animationDelay = (idx * 60) + 'ms';
-    var typeLabel = AUTO_TYPE_LABELS[step.type] || step.type;
+    var typeLabel = AUTO_TYPE_LABELS[stepType] || stepType;
     var summaryHtml = '';
     if (variant === 'detail') {
       var lines = step.summaryLines;
@@ -1036,20 +1070,23 @@ function renderPipelineSteps(steps, containerSelector, options) {
       }
       if (lines && lines.length) {
         var fullText = lines.map(function(l) { return String(l); }).join('\n');
+        var tip = escapeHtml(truncateForTooltip(fullText));
         summaryHtml =
-          '<div class="auto-step-summary" title="' + escapeHtml(fullText) + '">' +
+          '<div class="auto-step-summary" title="' + tip + '">' +
           lines.map(function(line) {
             return '<span class="auto-step-summary-line">' + escapeHtml(line) + '</span>';
           }).join('') +
           '</div>';
       }
     }
+    var titleText = step.title != null ? String(step.title) : '';
+    var descText = step.description != null ? String(step.description) : '';
     card.innerHTML =
       '<span class="auto-step-num">' + (idx + 1) + '</span>' +
-      '<div class="auto-step-icon-wrap">' + step.icon + '</div>' +
-      '<span class="auto-step-type-label auto-step-type-label--' + step.type + '">' + escapeHtml(typeLabel) + '</span>' +
-      '<span class="auto-step-title">' + escapeHtml(step.title) + '</span>' +
-      '<span class="auto-step-desc">' + escapeHtml(step.description) + '</span>' +
+      '<div class="auto-step-icon-wrap">' + (step.icon || '') + '</div>' +
+      '<span class="auto-step-type-label auto-step-type-label--' + stepType + '">' + escapeHtml(typeLabel) + '</span>' +
+      '<span class="auto-step-title">' + escapeHtml(titleText) + '</span>' +
+      '<span class="auto-step-desc">' + escapeHtml(descText) + '</span>' +
       summaryHtml;
     container.appendChild(card);
 
@@ -1078,17 +1115,28 @@ function renderAutomationDetail(autoId) {
   document.getElementById('autoDetailStatus').textContent      = auto.enabled ? '已启用' : '已停用';
 
   var created = new Date(auto.createdAt);
-  document.getElementById('autoDetailCreated').textContent =
-    '创建于 ' + created.toLocaleDateString('zh-CN', { month: 'long', day: 'numeric', year: 'numeric' });
+  var createdEl = document.getElementById('autoDetailCreated');
+  if (createdEl) {
+    if (isValidAutomationDate(created)) {
+      createdEl.textContent =
+        '创建于 ' + created.toLocaleDateString('zh-CN', { month: 'long', day: 'numeric', year: 'numeric' });
+    } else {
+      createdEl.textContent = '创建时间未知';
+    }
+  }
 
-  var runCount = typeof auto.runCount === 'number' ? auto.runCount : 0;
+  var runCount = normalizeRunCount(auto.runCount);
   var lastRunEl = document.getElementById('autoDetailLastRun');
   if (lastRunEl) {
     if (auto.lastRunAt) {
       var last = new Date(auto.lastRunAt);
-      lastRunEl.textContent = '上次触发：' + last.toLocaleString('zh-CN', {
-        year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit',
-      });
+      if (isValidAutomationDate(last)) {
+        lastRunEl.textContent = '上次触发：' + last.toLocaleString('zh-CN', {
+          year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit',
+        });
+      } else {
+        lastRunEl.textContent = '从未触发';
+      }
     } else {
       lastRunEl.textContent = '从未触发';
     }
@@ -1096,11 +1144,11 @@ function renderAutomationDetail(autoId) {
 
   var metaEl = document.getElementById('autoPipelineMeta');
   if (metaEl) {
-    metaEl.textContent = '累计触发 ' + runCount + ' 次';
+    metaEl.textContent = formatRunCountLabelZh(runCount);
     metaEl.style.display = '';
   }
 
-  renderPipelineSteps(auto.steps, '#autoDetailSteps', {
+  renderPipelineSteps(Array.isArray(auto.steps) ? auto.steps : [], '#autoDetailSteps', {
     variant: 'detail',
     templateKey: auto.templateKey,
   });
