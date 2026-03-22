@@ -24,6 +24,7 @@ The goal is to recreate a familiar Outlook-style interface with AI-assisted orga
 - **Smart Priority** — AI-powered inbox triage (high / medium / low)
 - **Smart Folders** — Create custom folders with name + description; AI classifies emails automatically (LLM or local keyword fallback)
 - **AI Search** — Semantic search with LLM understanding, vector similarity, or keyword fallback
+- **Automations** — Describe a workflow in natural language (mock “AI” picks a template); automations are stored in `localStorage`. Each automation has a reading-pane detail view with a horizontal pipeline: step type (trigger / process / action), title, description, and **per-step configuration summaries**. The header shows **total run count** (formatted with `Intl`) and **last triggered** time when set; invalid or missing dates degrade to safe placeholder text.
 - Mock data for inbox, drafts, sent, junk, archive, and deleted
 
 ## Tech Stack
@@ -49,6 +50,7 @@ No backend is required. AI features degrade gracefully when no API key is config
 │   ├── ai-priority.js      # Smart Priority classification engine
 │   ├── ai-search.js        # LLM + vector + keyword search
 │   ├── smart-folders.js    # Smart Folders CRUD + AI classification
+│   ├── automations.js      # Automation templates, localStorage CRUD, mock AI template matching
 │   ├── embeddings.js       # Pre-generated vectors (optional)
 │   └── generate-embeddings.js  # Node script to build embeddings
 └── styles/
@@ -104,10 +106,13 @@ const OPENAI_API_KEY = 'sk-your-key-here';
 
 This enables LLM-based search and smart folder classification. Without it, the app falls back to local keyword matching and vector search (if embeddings are pre-generated).
 
+Automation creation uses **client-side template matching** only (keyword map in `automations.js`); it does not call OpenAI. Run counts and last-run timestamps are stored on each automation object but are not incremented by a real mail pipeline unless you wire that up later.
+
 ## Roadmap
 
 Possible next steps include:
 
+- Hook automations to real or simulated mail events (increment `runCount`, set `lastRunAt`)
 - Advanced filtering by sender, date, or tag
 - Better keyboard navigation
 - Bulk triage actions
