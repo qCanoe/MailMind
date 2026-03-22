@@ -1885,6 +1885,15 @@ h1, h2, h3, h4, h5, h6 { font-family: var(--font-heading); }
   padding: 32px 40px 44px;
 }
 
+.auto-pipeline-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px 20px;
+  margin-bottom: 20px;
+}
+
 .auto-pipeline-title {
   font-family: var(--font-heading);
   font-size: 11px;
@@ -1892,7 +1901,14 @@ h1, h2, h3, h4, h5, h6 { font-family: var(--font-heading); }
   color: var(--text-muted);
   text-transform: uppercase;
   letter-spacing: 1px;
-  margin-bottom: 24px;
+  margin: 0;
+}
+
+.auto-pipeline-meta {
+  margin: 0;
+  font-size: 12px;
+  color: var(--text-muted);
+  font-weight: 500;
 }
 
 /* Horizontal step row */
@@ -1912,6 +1928,25 @@ h1, h2, h3, h4, h5, h6 { font-family: var(--font-heading); }
 }
 .auto-pipeline-steps::-webkit-scrollbar { height: 4px; }
 .auto-pipeline-steps::-webkit-scrollbar-thumb { background: var(--border-panel); border-radius: 2px; }
+
+/* Detail view: cards grow to fill available width (less empty space on the right) */
+.reading-automation .auto-pipeline-steps--detail {
+  align-items: stretch;
+}
+
+.reading-automation .auto-pipeline-steps--detail .auto-step-card {
+  flex: 1 1 0;
+  width: auto;
+  min-width: 140px;
+  max-width: 220px;
+  align-items: stretch;
+}
+
+.reading-automation .auto-pipeline-steps--detail .auto-step-arrow {
+  flex-shrink: 0;
+  align-self: center;
+  margin-top: 0;
+}
 
 .auto-step-card {
   display: flex;
@@ -2024,6 +2059,42 @@ h1, h2, h3, h4, h5, h6 { font-family: var(--font-heading); }
   overflow: hidden;
   overflow-wrap: anywhere;
   word-break: break-word;
+}
+
+/* Configuration summary (detail view only) */
+.auto-step-summary {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 4px;
+  width: 100%;
+  margin-top: 6px;
+  padding-top: 8px;
+  border-top: 1px solid var(--border-light);
+  text-align: left;
+}
+.auto-step-summary-line {
+  font-size: 10px;
+  line-height: 1.4;
+  color: var(--text-muted);
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  overflow: hidden;
+}
+
+.reading-automation .auto-pipeline-steps--detail .auto-step-icon-wrap,
+.reading-automation .auto-pipeline-steps--detail .auto-step-type-label,
+.reading-automation .auto-pipeline-steps--detail .auto-step-title {
+  align-self: center;
+  text-align: center;
+}
+
+.reading-automation .auto-pipeline-steps--detail .auto-step-desc {
+  text-align: center;
 }
 
 /* Arrow connector between steps */

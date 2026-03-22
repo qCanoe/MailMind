@@ -31,10 +31,14 @@ const AUTOMATION_TEMPLATES = {
     name: '任务提取',
     aiReply: "好的！我已为你构建了一个 **任务提取** 流程。它将自动扫描收到的邮件，识别行动项，并将任务添加到你的待办列表。",
     steps: [
-      { type: 'trigger', icon: AUTO_SVG.email,    title: '收到邮件',    description: '每封新邮件到达时触发' },
-      { type: 'filter',  icon: AUTO_SVG.brain,    title: '分析内容',    description: 'AI 扫描行动项和截止日期' },
-      { type: 'action',  icon: AUTO_SVG.task,     title: '创建任务',    description: '将提取的任务加入待办列表' },
-      { type: 'action',  icon: AUTO_SVG.bell,     title: '发送通知',    description: '推送任务摘要通知' },
+      { type: 'trigger', icon: AUTO_SVG.email, title: '收到邮件', description: '每封新邮件到达时触发',
+        summaryLines: ['账户：全部已连接账户', '范围：收件箱新邮件'] },
+      { type: 'filter', icon: AUTO_SVG.brain, title: '分析内容', description: 'AI 扫描行动项和截止日期',
+        summaryLines: ['识别：行动项、截止时间', '忽略：纯通知类群发'] },
+      { type: 'action', icon: AUTO_SVG.task, title: '创建任务', description: '将提取的任务加入待办列表',
+        summaryLines: ['目标：MailMind 待办', '去重：同线程合并'] },
+      { type: 'action', icon: AUTO_SVG.bell, title: '发送通知', description: '推送任务摘要通知',
+        summaryLines: ['渠道：桌面通知', '内容：任务标题与截止'] },
     ],
   },
   summarize: {
@@ -42,9 +46,12 @@ const AUTOMATION_TEMPLATES = {
     name: '邮件摘要',
     aiReply: "好的！我已为你构建了一个 **邮件摘要** 流程。它会将长邮件压缩成简洁摘要，并自动标注到邮件头部，方便快速浏览。",
     steps: [
-      { type: 'trigger', icon: AUTO_SVG.email,    title: '收到邮件',    description: '每封新邮件到达时触发' },
-      { type: 'filter',  icon: AUTO_SVG.summary,  title: '生成摘要',    description: 'AI 生成简洁可读的摘要' },
-      { type: 'action',  icon: AUTO_SVG.tag,      title: '标注邮件',    description: '将摘要附加到邮件头部' },
+      { type: 'trigger', icon: AUTO_SVG.email, title: '收到邮件', description: '每封新邮件到达时触发',
+        summaryLines: ['账户：全部已连接账户', '范围：收件箱新邮件'] },
+      { type: 'filter', icon: AUTO_SVG.summary, title: '生成摘要', description: 'AI 生成简洁可读的摘要',
+        summaryLines: ['触发：正文超过约 120 字', '风格：要点列表、一句结论'] },
+      { type: 'action', icon: AUTO_SVG.tag, title: '标注邮件', description: '将摘要附加到邮件头部',
+        summaryLines: ['位置：邮件预览摘要区', '前缀：[AI 摘要]'] },
     ],
   },
   reply: {
@@ -52,9 +59,12 @@ const AUTOMATION_TEMPLATES = {
     name: '智能回复',
     aiReply: "好的！我已为你构建了一个 **智能回复** 流程。它将自动起草上下文相关的回复，放入待审队列，由你确认后再发送。",
     steps: [
-      { type: 'trigger', icon: AUTO_SVG.email,    title: '收到邮件',    description: '每封新邮件到达时触发' },
-      { type: 'filter',  icon: AUTO_SVG.pen,      title: '起草回复',    description: 'AI 撰写符合上下文的回复草稿' },
-      { type: 'action',  icon: AUTO_SVG.queue,    title: '进入审核队列', description: '草稿移至待审队列等待确认' },
+      { type: 'trigger', icon: AUTO_SVG.email, title: '收到邮件', description: '每封新邮件到达时触发',
+        summaryLines: ['账户：全部已连接账户', '范围：收件箱新邮件'] },
+      { type: 'filter', icon: AUTO_SVG.pen, title: '起草回复', description: 'AI 撰写符合上下文的回复草稿',
+        summaryLines: ['语气：与往来线程一致', '长度：适中，可编辑'] },
+      { type: 'action', icon: AUTO_SVG.queue, title: '进入审核队列', description: '草稿移至待审队列等待确认',
+        summaryLines: ['队列：待发草稿箱', '发送前需手动确认'] },
     ],
   },
   urgent: {
@@ -62,10 +72,14 @@ const AUTOMATION_TEMPLATES = {
     name: '优先级提醒',
     aiReply: "好的！我已为你构建了一个 **优先级提醒** 流程。它将对每封邮件进行紧急程度评分，关键邮件到达时立即提醒你。",
     steps: [
-      { type: 'trigger', icon: AUTO_SVG.email,    title: '收到邮件',    description: '每封新邮件到达时触发' },
-      { type: 'filter',  icon: AUTO_SVG.search,   title: '优先级检查',  description: '评估紧急程度与发件人重要性' },
-      { type: 'action',  icon: AUTO_SVG.alert,    title: '立即提醒',    description: '发送高优先级通知' },
-      { type: 'action',  icon: AUTO_SVG.flag,     title: '标记邮件',    description: '在收件箱中标记为紧急' },
+      { type: 'trigger', icon: AUTO_SVG.email, title: '收到邮件', description: '每封新邮件到达时触发',
+        summaryLines: ['账户：全部已连接账户', '范围：收件箱新邮件'] },
+      { type: 'filter', icon: AUTO_SVG.search, title: '优先级检查', description: '评估紧急程度与发件人重要性',
+        summaryLines: ['标题：含「紧急」「ASAP」等加权', '发件人：常用联系人提高权重'] },
+      { type: 'action', icon: AUTO_SVG.alert, title: '立即提醒', description: '发送高优先级通知',
+        summaryLines: ['渠道：桌面通知', '优先级：高（打断式）'] },
+      { type: 'action', icon: AUTO_SVG.flag, title: '标记邮件', description: '在收件箱中标记为紧急',
+        summaryLines: ['标记：紧急旗标', '列表：高优先级智能文件夹可见'] },
     ],
   },
   default: {
@@ -73,9 +87,12 @@ const AUTOMATION_TEMPLATES = {
     name: '自动标签',
     aiReply: "好的！我已为你构建了一个 **自动标签** 流程。它将对每封邮件按主题和发件人分类，并自动添加对应标签。",
     steps: [
-      { type: 'trigger', icon: AUTO_SVG.email,    title: '收到邮件',    description: '每封新邮件到达时触发' },
-      { type: 'filter',  icon: AUTO_SVG.classify, title: '智能分类',    description: 'AI 按主题和发件人分类' },
-      { type: 'action',  icon: AUTO_SVG.tag,      title: '应用标签',    description: '自动为邮件添加对应标签' },
+      { type: 'trigger', icon: AUTO_SVG.email, title: '收到邮件', description: '每封新邮件到达时触发',
+        summaryLines: ['账户：全部已连接账户', '范围：收件箱新邮件'] },
+      { type: 'filter', icon: AUTO_SVG.classify, title: '智能分类', description: 'AI 按主题和发件人分类',
+        summaryLines: ['维度：主题、发件域、关键词', '置信度：中以上才打标'] },
+      { type: 'action', icon: AUTO_SVG.tag, title: '应用标签', description: '自动为邮件添加对应标签',
+        summaryLines: ['标签：项目 / 团队 / 主题类', '冲突：保留用户已有手动标签'] },
     ],
   },
 };
@@ -93,6 +110,12 @@ function saveAutomations(list) {
   localStorage.setItem(AUTO_STORAGE_KEY, JSON.stringify(list));
 }
 
+/** Deep-clone template steps so stored automations don't share references with templates. */
+function cloneTemplateSteps(templateKey) {
+  const template = AUTOMATION_TEMPLATES[templateKey] || AUTOMATION_TEMPLATES.default;
+  return JSON.parse(JSON.stringify(template.steps));
+}
+
 function createAutomation({ name, description, templateKey }) {
   const list = loadAutomations();
   const template = AUTOMATION_TEMPLATES[templateKey] || AUTOMATION_TEMPLATES.default;
@@ -103,7 +126,9 @@ function createAutomation({ name, description, templateKey }) {
     enabled: true,
     createdAt: new Date().toISOString(),
     templateKey: template.key,
-    steps: template.steps,
+    steps: cloneTemplateSteps(template.key),
+    runCount: 0,
+    lastRunAt: null,
   };
   list.push(auto);
   saveAutomations(list);
@@ -169,6 +194,16 @@ function mockAiProcess(description) {
 // ─── Section 5: Query API ─────────────────────────────────────────────────────
 function getAutomationById(id) {
   return loadAutomations().find(function(a) { return a.id === id; }) || null;
+}
+
+/**
+ * Merge summaryLines for old stored steps from the canonical template (same index).
+ * Used by the detail view when persisted steps omit summaryLines.
+ */
+function getTemplateStepSummaryLines(templateKey, stepIndex) {
+  const template = AUTOMATION_TEMPLATES[templateKey] || AUTOMATION_TEMPLATES.default;
+  const step = template.steps[stepIndex];
+  return (step && step.summaryLines) ? step.summaryLines : [];
 }
 
 // ─── Section 6: Init ──────────────────────────────────────────────────────────
