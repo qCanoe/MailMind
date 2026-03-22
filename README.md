@@ -106,6 +106,19 @@ const OPENAI_API_KEY = 'sk-your-key-here';
 
 This enables LLM-based search and smart folder classification. Without it, the app falls back to local keyword matching and vector search (if embeddings are pre-generated).
 
+### Changing OpenAI models
+
+Model names are **not** configured in `config.js` (that file is only for the API key). Edit the `model` field in the relevant `fetch` payload:
+
+| Use case | File | Notes |
+|----------|------|--------|
+| **LLM search** (chat completions) | [`scripts/ai-search.js`](scripts/ai-search.js) | Search the `chat/completions` request body for `model:` |
+| **Smart folder classification** (chat completions) | [`scripts/smart-folders.js`](scripts/smart-folders.js) | Same: `chat/completions` → `model:` |
+| **Embeddings** (semantic search / vectors) | [`scripts/ai-search.js`](scripts/ai-search.js) | `embeddings` request → `model:` |
+| **Offline embedding generation** | [`scripts/generate-embeddings.js`](scripts/generate-embeddings.js) | Keep the embedding `model` aligned with runtime if you switch models; re-run the script to regenerate vector files |
+
+If you change the **embedding** model or its dimensions, regenerate embeddings and ensure any stored vectors match what the app expects.
+
 Automation creation uses **client-side template matching** only (keyword map in `automations.js`); it does not call OpenAI. Run counts and last-run timestamps are stored on each automation object but are not incremented by a real mail pipeline unless you wire that up later.
 
 ## Roadmap
