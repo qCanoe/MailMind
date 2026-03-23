@@ -1,0 +1,48 @@
+# Deploy static site to GitHub Pages and inject OpenAI key from repo Secrets.
+# Setup: Settings → Secrets and variables → Actions → New repository secret
+# Name: OPENAI_API_KEY   Value: your sk-... key
+# Settings → Pages → Build and deployment → Source: GitHub Actions
+
+name: Deploy GitHub Pages
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Create scripts/config.js from secret
+        run: |
+          mkdir -p scripts
+          {
+            echo '/* MailMind — AI Search Configuration (generated in CI) */'
+            echo "const OPENAI_API_KEY = '${{ secrets.OPENAI_API_KEY }}';"
+          } > scripts/config.js
+
+      - name: Configure Pages
+        uses: actions/configure-pages@v4
+
+      - name: Upload site
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: .
+
+      - name: Deploy
+        id: deployment
+        uses: actions/deploy-pages@v4
