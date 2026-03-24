@@ -6,6 +6,9 @@
 
 'use strict';
 
+/** 与 index.html 中 config.js 同步；若 config 未加载（404）则为空字符串 */
+const MM_OPENAI_KEY = typeof OPENAI_API_KEY !== 'undefined' ? OPENAI_API_KEY : '';
+
 /* ── 内存向量索引：{ [mailId]: number[] } ── */
 const vectorIndex = {};
 let indexReady = false;
@@ -32,7 +35,7 @@ async function generateEmbedding(text) {
     method:  'POST',
     headers: {
       'Content-Type':  'application/json',
-      'Authorization': `Bearer ${OPENAI_API_KEY}`,
+      'Authorization': `Bearer ${MM_OPENAI_KEY}`,
     },
     body: JSON.stringify({
       model: 'text-embedding-3-large',
@@ -74,7 +77,7 @@ async function buildVectorIndex() {
   }
 
   /* 回退：embeddings.js 不存在时，检查 API Key 并实时生成 */
-  if (!OPENAI_API_KEY || OPENAI_API_KEY.startsWith('sk-your')) {
+  if (!MM_OPENAI_KEY || MM_OPENAI_KEY.startsWith('sk-your')) {
     console.warn('[MailMind AI] API Key 未配置，且预生成向量文件不存在，AI 搜索不可用。');
     console.warn('[MailMind AI] 请运行 `node scripts/generate-embeddings.js` 生成向量文件。');
     setSearchStatus('no-key');
@@ -180,7 +183,7 @@ function mailToLLMSummary(mail) {
  * @returns {{ answer: string, results: Array<{id: number, reason: string}> }}
  */
 async function llmSearch(query) {
-  if (!OPENAI_API_KEY || OPENAI_API_KEY.startsWith('sk-your')) {
+  if (!MM_OPENAI_KEY || MM_OPENAI_KEY.startsWith('sk-your')) {
     throw new Error('API Key 未配置');
   }
 
@@ -220,7 +223,7 @@ ${emailsJson}`;
     method:  'POST',
     headers: {
       'Content-Type':  'application/json',
-      'Authorization': `Bearer ${OPENAI_API_KEY}`,
+      'Authorization': `Bearer ${MM_OPENAI_KEY}`,
     },
     body: JSON.stringify({
       model:           'gpt-5.4-mini',
